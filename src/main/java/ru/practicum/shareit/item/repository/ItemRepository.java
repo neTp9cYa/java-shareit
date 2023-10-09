@@ -5,7 +5,7 @@ import java.util.Optional;
 import ru.practicum.shareit.item.model.Item;
 
 public interface ItemRepository {
-    List<Item> findByUserId(final Integer userId);
+    List<Item> findByUserId(final int userId);
 
     Optional<Item> findById(final int itemId);
 

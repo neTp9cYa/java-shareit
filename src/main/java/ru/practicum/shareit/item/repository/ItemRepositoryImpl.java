@@ -14,7 +14,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     private Integer nextId = 1;
 
     @Override
-    public List<Item> findByUserId(final Integer userId) {
+    public List<Item> findByUserId(final int userId) {
         return items.values().stream()
             .filter(item -> item.getOwnerId() == userId)
             .collect(Collectors.toList());

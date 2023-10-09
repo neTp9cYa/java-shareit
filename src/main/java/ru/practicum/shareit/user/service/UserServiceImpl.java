@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(final Integer userId) {
+    public void delete(final int userId) {
         userValidator.validateDelete(userId);
         userRepository.delete(userId);
     }

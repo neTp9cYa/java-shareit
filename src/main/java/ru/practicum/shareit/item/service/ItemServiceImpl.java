@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
                 throw new NotFoundException(
                     String.format("Item with id $d not found for user with id %d", item.getId(), item.getOwnerId()));
             });
-        if (item.getOwnerId() != storedItem.getOwnerId()) {
+        if (!item.getOwnerId().equals(storedItem.getOwnerId())) {
             throw new NotFoundException(
                 String.format("Item with id $d not found for user with id %d", item.getId(), item.getOwnerId()));
         }

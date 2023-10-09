@@ -49,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(final Integer userId) {
+    public void delete(final int userId) {
         final User storedUser = usersById.get(userId);
         usersById.remove(storedUser.getId());
         usersByEmail.remove(storedUser.getEmail().toLowerCase());
