@@ -19,24 +19,24 @@ public class ErrorHandler {
 
     private final ExceptionHelper exceptionHelper;
 
-    @ExceptionHandler(value = {ValidationException.class})
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto handleValidationException(final ValidationException e) {
-        log.warn(e.getMessage());
+        log.warn("Validation Exception occured", e);
         return new ErrorDto(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto handleNotFoundException(final NotFoundException e) {
-        log.warn(e.getMessage());
+        log.warn("Not Found Exception occured", e);
         return new ErrorDto(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorDto handleNotFoundException(final ConflictException e) {
-        log.warn(e.getMessage());
+        log.warn("Conflict Exception occured", e);
         return new ErrorDto(e.getMessage());
     }
 
