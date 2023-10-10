@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapperImpl;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.service.ItemMapperImpl;
 import ru.practicum.shareit.item.service.ItemService;
 
 @RestController
@@ -28,33 +28,26 @@ public class ItemController {
     @GetMapping
     @LogInputOutputAnnotaion
     public List<ItemDto> findOwn(@RequestHeader("X-Sharer-User-Id") final Integer userId) {
-        final List<Item> items = itemService.findByUserId(userId);
-        return itemMapper.toItemDtoList(items);
+        return itemService.findByUserId(userId);
     }
 
     @GetMapping("/{itemId}")
     @LogInputOutputAnnotaion
     public ItemDto findById(@PathVariable final Integer itemId) {
-        final Item item = itemService.findById(itemId);
-        return itemMapper.toItemDto(item);
+        return itemService.findById(itemId);
     }
 
     @GetMapping("/search")
     @LogInputOutputAnnotaion
     public List<ItemDto> search(@RequestParam final String text) {
-        final List<Item> items = itemService.search(text);
-        return itemMapper.toItemDtoList(items);
+        return itemService.search(text);
     }
 
     @PostMapping
     @LogInputOutputAnnotaion
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") final Integer userId,
                           @RequestBody final ItemDto itemDto) {
-        final Item item = itemMapper.toItem(itemDto);
-        item.setOwnerId(userId);
-
-        final Item createdItem = itemService.create(item);
-        return itemMapper.toItemDto(createdItem);
+        return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
@@ -62,11 +55,7 @@ public class ItemController {
     public ItemDto update(@RequestHeader("X-Sharer-User-Id") final Integer userId,
                           @PathVariable final Integer itemId,
                           @RequestBody final ItemDto itemDto) {
-        final Item item = itemMapper.toItem(itemDto);
-        item.setOwnerId(userId);
-        item.setId(itemId);
-
-        final Item updatedItem = itemService.update(item);
-        return itemMapper.toItemDto(updatedItem);
+        itemDto.setId(itemId);
+        return itemService.update(userId, itemDto);
     }
 }

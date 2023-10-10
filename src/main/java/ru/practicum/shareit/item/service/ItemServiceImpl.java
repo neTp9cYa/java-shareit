@@ -5,9 +5,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.common.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.validator.ItemValidator;
 import ru.practicum.shareit.user.service.UserService;
 
 @Service
@@ -16,52 +16,64 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final ItemValidator itemValidator;
+    private final ItemMapper itemMapper;
     private final UserService userService;
 
     @Override
-    public List<Item> findByUserId(final Integer userId) {
-        return itemRepository.findByUserId(userId);
+    public List<ItemDto> findByUserId(final Integer userId) {
+        final List<Item> items = itemRepository.findByUserId(userId);
+        return itemMapper.toItemDtoList(items);
     }
 
     @Override
-    public Item findById(final Integer itemId) {
-        return itemRepository.findById(itemId).orElse(null);
+    public ItemDto findById(final Integer itemId) {
+        final Item item = itemRepository.findById(itemId)
+            .orElseThrow(() -> new NotFoundException(String.format("Item with id %d not found", itemId)));
+        return itemMapper.toItemDto(item);
     }
 
     @Override
-    public List<Item> search(final String text) {
+    public List<ItemDto> search(final String text) {
         if (text == null || text.isEmpty()) {
-            return Collections.<Item>emptyList();
+            return Collections.<ItemDto>emptyList();
         }
-        return itemRepository.search(text);
+        final List<Item> items = itemRepository.search(text);
+        return itemMapper.toItemDtoList(items);
     }
 
     @Override
-    public Item create(final Item item) {
-        itemValidator.validateCreate(item);
+    public ItemDto create(final Integer userId, final ItemDto itemDto) {
+        itemValidator.validateCreate(itemDto);
 
         // check if user exists
-        userService.findById(item.getOwnerId());
+        userService.findById(userId);
 
-        return itemRepository.create(item);
+        final Item item = itemMapper.toItem(itemDto);
+        item.setOwnerId(userId);
+
+        final Item storedItem = itemRepository.create(item);
+        return itemMapper.toItemDto(storedItem);
     }
 
     @Override
-    public Item update(final Item item) {
-        itemValidator.validateUpdate(item);
+    public ItemDto update(final Integer userId, final ItemDto itemDto) {
+        itemValidator.validateUpdate(itemDto);
 
         // check if user exists
-        userService.findById(item.getOwnerId());
+        userService.findById(userId);
 
-        final Item storedItem = itemRepository.findById(item.getId())
+        final Item storedItem = itemRepository.findById(itemDto.getId())
             .orElseThrow(() -> {
                 throw new NotFoundException(
-                    String.format("Item with id $d not found for user with id %d", item.getId(), item.getOwnerId()));
+                    String.format("Item with id $d not found for user with id %d", itemDto.getId(), userId));
             });
-        if (!item.getOwnerId().equals(storedItem.getOwnerId())) {
+        if (!storedItem.getOwnerId().equals(userId)) {
             throw new NotFoundException(
-                String.format("Item with id $d not found for user with id %d", item.getId(), item.getOwnerId()));
+                String.format("Item with id $d not found for user with id %d", itemDto.getId(), userId));
         }
+
+        final Item item = itemMapper.toItem(itemDto);
+        item.setOwnerId(userId);
 
         // set current value for absent props
         if (item.getName() == null) {
@@ -75,6 +87,6 @@ public class ItemServiceImpl implements ItemService {
         }
 
         itemRepository.update(item);
-        return item;
+        return itemMapper.toItemDto(item);
     }
 }
