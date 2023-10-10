@@ -3,8 +3,8 @@ package ru.practicum.shareit.user.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.common.exception.ConflictException;
 import ru.practicum.shareit.common.exception.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.validator.UserValidator;
@@ -15,33 +15,40 @@ public class UserServiceImpl implements UserService {
 
     private final UserValidator userValidator;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDto> findAll() {
+        final List<User> users = userRepository.findAll();
+        return userMapper.toUserDtoList(users);
     }
 
     @Override
-    public User findById(final int userId) {
-        return userRepository.findById(userId)
+    public UserDto findById(final int userId) {
+        final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
+        return userMapper.toUserDto(user);
     }
 
     @Override
-    public User create(final User user) {
-        userValidator.validateCreate(user);
-        return userRepository.create(user);
+    public UserDto create(final UserDto userDto) {
+        userValidator.validateCreate(userDto);
+        final User user = userMapper.toUser(userDto);
+        final User storedUser = userRepository.create(user);
+        return userMapper.toUserDto(storedUser);
     }
 
     @Override
-    public User update(final User user) {
-        userValidator.validateUpdate(user);
+    public UserDto update(final UserDto userDto) {
+        userValidator.validateUpdate(userDto);
 
         // validate if user with id exists
-        final User storedUser = userRepository.findById(user.getId())
+        final User storedUser = userRepository.findById(userDto.getId())
             .orElseThrow(() -> {
-                throw new NotFoundException(String.format("User with id $d not found", user.getId()));
+                throw new NotFoundException(String.format("User with id $d not found", userDto.getId()));
             });
+
+        final User user = userMapper.toUser(userDto);
 
         // set current value for absent props
         if (user.getName() == null) {
@@ -52,7 +59,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.update(user);
-        return user;
+        return userMapper.toUserDto(user);
     }
 
     @Override

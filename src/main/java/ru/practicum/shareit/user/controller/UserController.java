@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.service.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 @RestController
@@ -28,37 +27,27 @@ public class UserController {
     @GetMapping
     @LogInputOutputAnnotaion
     public List<UserDto> findAll() {
-        log.info("Start to process findAll action from UserController with no parameters");
-        final List<User> users = userService.findAll();
-        final List<UserDto> usersDto = userMapper.toUserDtoList(users);
-        log.info("End to process findAll action from UserController with result: {}", usersDto);
-        return usersDto;
+        return userService.findAll();
     }
 
     @GetMapping("/{userId}")
     @LogInputOutputAnnotaion
     public UserDto findById(@PathVariable final Integer userId) {
-        final User user = userService.findById(userId);
-        return userMapper.toUserDto(user);
+        return userService.findById(userId);
     }
 
     @PostMapping
     @LogInputOutputAnnotaion
     public UserDto create(@RequestBody final UserDto userDto) {
-        final User user = userMapper.toUser(userDto);
-        final User createdUser = userService.create(user);
-        return userMapper.toUserDto(createdUser);
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{userId}")
     @LogInputOutputAnnotaion
     public UserDto update(@PathVariable final Integer userId,
                           @RequestBody final UserDto userDto) {
-        final User user = userMapper.toUser(userDto);
-        user.setId(userId);
-
-        final User updatedUser = userService.update(user);
-        return userMapper.toUserDto(updatedUser);
+        userDto.setId(userId);
+        return userService.update(userDto);
     }
 
     @DeleteMapping("/{userId}")

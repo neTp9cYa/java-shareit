@@ -1,11 +1,11 @@
 package ru.practicum.shareit.user.validator;
 
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 public interface UserValidator {
-    void validateCreate(User user);
+    void validateCreate(UserDto userDto);
 
-    void validateUpdate(User user);
+    void validateUpdate(UserDto userDto);
 
     void validateDelete(Integer userId);
 }

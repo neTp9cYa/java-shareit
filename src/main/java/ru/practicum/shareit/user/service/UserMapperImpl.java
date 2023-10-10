@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.mapper;
+package ru.practicum.shareit.user.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
