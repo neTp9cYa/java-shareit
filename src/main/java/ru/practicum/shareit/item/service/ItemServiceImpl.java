@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.service.UserService;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
-    private final ItemValidator itemValidator;
     private final ItemMapper itemMapper;
     private final UserService userService;
 
@@ -43,7 +42,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(final Integer userId, final ItemDto itemDto) {
-        itemValidator.validateCreate(itemDto);
 
         // check if user exists
         userService.findById(userId);
@@ -57,7 +55,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto update(final Integer userId, final ItemDto itemDto) {
-        itemValidator.validateUpdate(itemDto);
 
         // check if user exists
         userService.findById(userId);
@@ -65,11 +62,11 @@ public class ItemServiceImpl implements ItemService {
         final Item storedItem = itemRepository.findById(itemDto.getId())
             .orElseThrow(() -> {
                 throw new NotFoundException(
-                    String.format("Item with id $d not found for user with id %d", itemDto.getId(), userId));
+                    String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
             });
         if (!storedItem.getOwnerId().equals(userId)) {
             throw new NotFoundException(
-                String.format("Item with id $d not found for user with id %d", itemDto.getId(), userId));
+                String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
         }
 
         final Item item = itemMapper.toItem(itemDto);

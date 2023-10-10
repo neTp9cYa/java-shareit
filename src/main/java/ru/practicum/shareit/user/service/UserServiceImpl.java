@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserValidator userValidator;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -31,7 +30,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(final UserDto userDto) {
-        userValidator.validateCreate(userDto);
         final User user = userMapper.toUser(userDto);
         final User storedUser = userRepository.create(user);
         return userMapper.toUserDto(storedUser);
@@ -39,7 +37,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(final UserDto userDto) {
-        userValidator.validateUpdate(userDto);
 
         // validate if user with id exists
         final User storedUser = userRepository.findById(userDto.getId())
@@ -63,7 +60,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(final int userId) {
-        userValidator.validateDelete(userId);
         userRepository.delete(userId);
     }
 }

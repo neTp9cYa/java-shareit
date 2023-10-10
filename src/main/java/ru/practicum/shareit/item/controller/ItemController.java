@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.controller;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemDtoCreate;
 import ru.practicum.shareit.item.service.ItemMapperImpl;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -27,13 +29,13 @@ public class ItemController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<ItemDto> findOwn(@RequestHeader("X-Sharer-User-Id") final Integer userId) {
+    public List<ItemDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId) {
         return itemService.findByUserId(userId);
     }
 
     @GetMapping("/{itemId}")
     @LogInputOutputAnnotaion
-    public ItemDto findById(@PathVariable final Integer itemId) {
+    public ItemDto findById(@PathVariable @NotNull final Integer itemId) {
         return itemService.findById(itemId);
     }
 
@@ -45,15 +47,15 @@ public class ItemController {
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") final Integer userId,
-                          @RequestBody final ItemDto itemDto) {
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+                          @RequestBody @Validated(ItemDtoCreate.class) final ItemDto itemDto) {
         return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     @LogInputOutputAnnotaion
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") final Integer userId,
-                          @PathVariable final Integer itemId,
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+                          @PathVariable @NotNull final Integer itemId,
                           @RequestBody final ItemDto itemDto) {
         itemDto.setId(itemId);
         return itemService.update(userId, itemDto);
