@@ -30,12 +30,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(final User user) {
         userValidator.validateCreate(user);
-
-        userRepository.findByEmail(user.getEmail())
-            .ifPresent(storedUser -> {
-                throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
-            });
-
         return userRepository.create(user);
     }
 
@@ -48,15 +42,6 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> {
                 throw new NotFoundException(String.format("User with id $d not found", user.getId()));
             });
-
-        // validate if other user has not same email
-        if (user.getEmail() != null && !user.getEmail().equalsIgnoreCase(storedUser.getEmail())) {
-            userRepository.findByEmail(user.getEmail())
-                .ifPresent(otherUser -> {
-                    throw new ConflictException(
-                        String.format("User with email %s already exists", user.getEmail()));
-                });
-        }
 
         // set current value for absent props
         if (user.getName() == null) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.common.exception.ConflictException;
 import ru.practicum.shareit.user.model.User;
 
 @Repository
@@ -25,12 +26,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(final String email) {
-        return Optional.ofNullable(usersByEmail.get(email.toLowerCase()));
-    }
-
-    @Override
     public User create(final User user) {
+        if (usersByEmail.containsKey(user.getEmail().toLowerCase())) {
+            throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
+        }
+
         setNextId(user);
         usersById.put(user.getId(), user);
         usersByEmail.put(user.getEmail().toLowerCase(), user);
@@ -40,6 +40,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void update(final User user) {
         final User storedUser = usersById.get(user.getId());
+
+        // validate if other user has not same email
+        if (!user.getEmail().equalsIgnoreCase(storedUser.getEmail())) {
+            if (usersByEmail.containsKey(user.getEmail().toLowerCase())) {
+                throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
+            }
+        }
+
         if (!user.getEmail().equalsIgnoreCase(storedUser.getEmail())) {
             usersByEmail.remove(storedUser.getEmail().toLowerCase());
         }
