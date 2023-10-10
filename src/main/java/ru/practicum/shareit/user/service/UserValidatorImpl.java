@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.validator;
+package ru.practicum.shareit.user.service;
 
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;

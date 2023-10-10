@@ -7,7 +7,6 @@ import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.validator.UserValidator;
 
 @Service
 @RequiredArgsConstructor
