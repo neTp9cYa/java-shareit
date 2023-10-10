@@ -50,6 +50,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(final int userId) {
         final User storedUser = usersById.get(userId);
+        if (storedUser == null) {
+            return;
+        }
+
         usersById.remove(storedUser.getId());
         usersByEmail.remove(storedUser.getEmail().toLowerCase());
     }
