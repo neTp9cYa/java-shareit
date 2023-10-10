@@ -43,9 +43,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item update(final Item item) {
+    public void update(final Item item) {
         items.put(item.getId(), item);
-        return item;
     }
 
     private void setNextId(final Item item) {

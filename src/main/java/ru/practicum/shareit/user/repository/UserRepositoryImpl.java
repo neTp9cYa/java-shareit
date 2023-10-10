@@ -38,14 +38,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User update(final User user) {
+    public void update(final User user) {
         final User storedUser = usersById.get(user.getId());
         if (!user.getEmail().equalsIgnoreCase(storedUser.getEmail())) {
             usersByEmail.remove(storedUser.getEmail().toLowerCase());
         }
         usersById.put(user.getId(), user);
         usersByEmail.put(user.getEmail().toLowerCase(), user);
-        return user;
     }
 
     @Override

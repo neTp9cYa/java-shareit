@@ -74,6 +74,7 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(storedItem.getAvailable());
         }
 
-        return itemRepository.update(item);
+        itemRepository.update(item);
+        return item;
     }
 }

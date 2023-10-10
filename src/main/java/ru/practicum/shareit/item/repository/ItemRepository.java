@@ -13,5 +13,5 @@ public interface ItemRepository {
 
     Item create(final Item item);
 
-    Item update(final Item item);
+    void update(final Item item);
 }

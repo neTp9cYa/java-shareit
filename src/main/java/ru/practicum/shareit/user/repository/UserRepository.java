@@ -13,7 +13,7 @@ public interface UserRepository {
 
     User create(final User user);
 
-    User update(final User user);
+    void update(final User user);
 
     void delete(final int userId);
 }
