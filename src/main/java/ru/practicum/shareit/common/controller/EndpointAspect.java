@@ -1,6 +1,5 @@
 package ru.practicum.shareit.common.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -20,7 +19,6 @@ public class EndpointAspect {
         String[] parameterNames = signature.getParameterNames();
         Object[] parameterValues = joinPoint.getArgs();
 
-        ObjectMapper mapper = new ObjectMapper();
         StringBuilder logParameters = new StringBuilder();
         for (int i = 0; i < parameterNames.length; i++) {
             logParameters.append(parameterNames[i]);
