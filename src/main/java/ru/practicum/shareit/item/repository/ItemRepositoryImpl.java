@@ -45,10 +45,10 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         itemsById.put(item.getId(), item);
 
-        Map<Integer, Item> userItems = itemsByUserId.get(item.getOwnerId());
+        Map<Integer, Item> userItems = itemsByUserId.get(item.getOwner().getId());
         if (userItems == null) {
             userItems = new HashMap<>();
-            itemsByUserId.put(item.getOwnerId(), userItems);
+            itemsByUserId.put(item.getOwner().getId(), userItems);
         }
         userItems.put(item.getId(), item);
 
@@ -58,7 +58,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public void update(final Item item) {
         itemsById.put(item.getId(), item);
-        itemsByUserId.get(item.getOwnerId()).put(item.getId(), item);
+        itemsByUserId.get(item.getOwner().getId()).put(item.getId(), item);
     }
 
     private void setNextId(final Item item) {
