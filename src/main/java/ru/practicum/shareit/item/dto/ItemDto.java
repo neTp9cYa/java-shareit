@@ -17,11 +17,9 @@ public class ItemDto {
     @Null(groups = ItemDtoCreate.class)
     private Integer id;
 
-    @NotNull(groups = ItemDtoCreate.class)
     @NotBlank(groups = ItemDtoCreate.class)
     private String name;
 
-    @NotNull(groups = ItemDtoCreate.class)
     @NotBlank(groups = ItemDtoCreate.class)
     private String description;
 
