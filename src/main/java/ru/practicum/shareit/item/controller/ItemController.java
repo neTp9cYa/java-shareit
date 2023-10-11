@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoCreate;
-import ru.practicum.shareit.item.service.ItemMapperImpl;
+import ru.practicum.shareit.item.service.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 
 @RestController
@@ -25,7 +25,7 @@ import ru.practicum.shareit.item.service.ItemService;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemMapperImpl itemMapper;
+    private final ItemMapper itemMapper;
 
     @GetMapping
     @LogInputOutputAnnotaion
