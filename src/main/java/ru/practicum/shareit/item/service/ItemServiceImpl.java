@@ -8,7 +8,8 @@ import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
     public List<ItemDto> findByUserId(final Integer userId) {
@@ -44,10 +45,11 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(final Integer userId, final ItemDto itemDto) {
 
         // check if user exists
-        userService.findById(userId);
+        userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         final Item item = itemMapper.toItem(itemDto);
-        item.setOwnerId(userId);
+        item.setOwner(User.builder().id(userId).build());
 
         final Item storedItem = itemRepository.create(item);
         return itemMapper.toItemDto(storedItem);
@@ -57,20 +59,21 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto update(final Integer userId, final ItemDto itemDto) {
 
         // check if user exists
-        userService.findById(userId);
+        userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         final Item storedItem = itemRepository.findById(itemDto.getId())
             .orElseThrow(() -> {
                 throw new NotFoundException(
                     String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
             });
-        if (!storedItem.getOwnerId().equals(userId)) {
+        if (!storedItem.getOwner().getId().equals(userId)) {
             throw new NotFoundException(
                 String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
         }
 
         final Item item = itemMapper.toItem(itemDto);
-        item.setOwnerId(userId);
+        item.setOwner(User.builder().id(userId).build());
 
         // set current value for absent props
         if (item.getName() == null) {
