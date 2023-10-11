@@ -22,7 +22,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findById(final int userId) {
-        return Optional.ofNullable(usersById.get(userId));
+        final User user = usersById.get(userId);
+        if (user == null) {
+            return Optional.empty();
+        }
+
+        final User userCopy = user.toBuilder().build();
+        return Optional.of(userCopy);
     }
 
     @Override

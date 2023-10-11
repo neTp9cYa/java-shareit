@@ -62,11 +62,14 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
+        // check if item exists
         final Item storedItem = itemRepository.findById(itemDto.getId())
             .orElseThrow(() -> {
                 throw new NotFoundException(
                     String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
             });
+
+        // check if user is owner of item
         if (!storedItem.getOwner().getId().equals(userId)) {
             throw new NotFoundException(
                 String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
@@ -75,18 +78,18 @@ public class ItemServiceImpl implements ItemService {
         final Item item = itemMapper.toItem(itemDto);
         item.setOwner(User.builder().id(userId).build());
 
-        // set current value for absent props
-        if (item.getName() == null) {
-            item.setName(storedItem.getName());
+        // update passed fields to new values
+        if (item.getName() != null) {
+            storedItem.setName(item.getName());
         }
-        if (item.getDescription() == null) {
-            item.setDescription(storedItem.getDescription());
+        if (item.getDescription() != null) {
+            storedItem.setDescription(item.getDescription());
         }
-        if (item.getAvailable() == null) {
-            item.setAvailable(storedItem.getAvailable());
+        if (item.getAvailable() != null) {
+            storedItem.setAvailable(item.getAvailable());
         }
 
-        itemRepository.update(item);
-        return itemMapper.toItemDto(item);
+        itemRepository.update(storedItem);
+        return itemMapper.toItemDto(storedItem);
     }
 }

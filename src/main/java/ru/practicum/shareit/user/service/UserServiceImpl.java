@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(final UserDto userDto) {
 
-        // validate if user with id exists
+        // validate if user exists
         final User storedUser = userRepository.findById(userDto.getId())
             .orElseThrow(() -> {
                 throw new NotFoundException(String.format("User with id $d not found", userDto.getId()));
@@ -46,16 +46,16 @@ public class UserServiceImpl implements UserService {
 
         final User user = userMapper.toUser(userDto);
 
-        // set current value for absent props
-        if (user.getName() == null) {
-            user.setName(storedUser.getName());
+        // update passed fields to new values
+        if (user.getName() != null) {
+            storedUser.setName(user.getName());
         }
-        if (user.getEmail() == null) {
-            user.setEmail(storedUser.getEmail());
+        if (user.getEmail() != null) {
+            storedUser.setEmail(user.getEmail());
         }
 
-        userRepository.update(user);
-        return userMapper.toUserDto(user);
+        userRepository.update(storedUser);
+        return userMapper.toUserDto(storedUser);
     }
 
     @Override
