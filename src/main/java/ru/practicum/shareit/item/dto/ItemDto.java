@@ -24,6 +24,6 @@ public class ItemDto {
     private String description;
 
     @NotNull(groups = ItemDtoCreate.class)
-    @AssertTrue(groups = ItemDtoCreate.class)
+    //@AssertTrue(groups = ItemDtoCreate.class)
     private Boolean available;
 }
