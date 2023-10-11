@@ -11,7 +11,6 @@ import ru.practicum.shareit.common.exception.ConflictException;
 import ru.practicum.shareit.common.exception.ErrorDto;
 import ru.practicum.shareit.common.exception.ExceptionHelper;
 import ru.practicum.shareit.common.exception.NotFoundException;
-import ru.practicum.shareit.common.exception.ValidationException;
 
 @RestControllerAdvice
 @Slf4j
@@ -20,9 +19,9 @@ public class ErrorHandler {
 
     private final ExceptionHelper exceptionHelper;
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorDto handleValidationException(final Exception e) {
+    public ErrorDto handleValidationException(final MethodArgumentNotValidException e) {
         log.warn("Validation Exception occured", e);
         return new ErrorDto(e.getMessage());
     }
