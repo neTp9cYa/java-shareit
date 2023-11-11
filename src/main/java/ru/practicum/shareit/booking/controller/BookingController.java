@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.controller;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.implementation.bytecode.constant.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,7 +18,6 @@ import ru.practicum.shareit.booking.dto.BookingStatusDto;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
-import ru.practicum.shareit.booking.model.BookingStatus;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -27,6 +25,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 public class BookingController {
 
     private final BookingService bookingService;
+
     @PostMapping
     @LogInputOutputAnnotaion
     public BookingViewDto create(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
@@ -37,15 +36,15 @@ public class BookingController {
     @PatchMapping("{bookingId}")
     @LogInputOutputAnnotaion
     public BookingViewDto approveOrReject(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                                      @PathVariable @NotNull final Integer bookingId,
-                                                      @RequestParam @NotNull final Boolean approved) {
+                                          @PathVariable @NotNull final Integer bookingId,
+                                          @RequestParam @NotNull final Boolean approved) {
         return bookingService.approveOrReject(userId, bookingId, approved);
     }
 
     @GetMapping("{bookingId}")
     @LogInputOutputAnnotaion
     public BookingViewDto findById(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                     @PathVariable @NotNull final Integer bookingId) {
+                                   @PathVariable @NotNull final Integer bookingId) {
         return bookingService.findById(userId, bookingId);
     }
 

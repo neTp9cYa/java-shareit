@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
 import java.time.LocalDateTime;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

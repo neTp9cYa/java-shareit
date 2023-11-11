@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.transaction.NotSupportedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
@@ -117,23 +116,17 @@ public class BookingServiceImpl implements BookingService {
 
         if (bookingStatusDto == BookingStatusDto.ALL) {
             bookings = bookingRepository.findOwn(userId);
-        }
-        else if (bookingStatusDto == BookingStatusDto.WAITING) {
+        } else if (bookingStatusDto == BookingStatusDto.WAITING) {
             bookings = bookingRepository.findOwn(userId, BookingStatus.WAITING);
-        }
-        else if (bookingStatusDto == BookingStatusDto.REJECTED) {
+        } else if (bookingStatusDto == BookingStatusDto.REJECTED) {
             bookings = bookingRepository.findOwn(userId, BookingStatus.REJECTED);
-        }
-        else if (bookingStatusDto == BookingStatusDto.PAST) {
+        } else if (bookingStatusDto == BookingStatusDto.PAST) {
             bookings = bookingRepository.findOwnInPast(userId, LocalDateTime.now());
-        }
-        else if (bookingStatusDto == BookingStatusDto.CURRENT) {
+        } else if (bookingStatusDto == BookingStatusDto.CURRENT) {
             bookings = bookingRepository.findOwnCurrent(userId, LocalDateTime.now());
-        }
-        else if (bookingStatusDto == BookingStatusDto.FUTURE) {
+        } else if (bookingStatusDto == BookingStatusDto.FUTURE) {
             bookings = bookingRepository.findOwnInFuture(userId, LocalDateTime.now());
-        }
-        else {
+        } else {
             throw new RuntimeException("Not supported");
         }
 
@@ -149,23 +142,17 @@ public class BookingServiceImpl implements BookingService {
 
         if (bookingStatusDto == BookingStatusDto.ALL) {
             bookings = bookingRepository.findByItemOwner(userId);
-        }
-        else if (bookingStatusDto == BookingStatusDto.WAITING) {
+        } else if (bookingStatusDto == BookingStatusDto.WAITING) {
             bookings = bookingRepository.findByItemOwner(userId, BookingStatus.WAITING);
-        }
-        else if (bookingStatusDto == BookingStatusDto.REJECTED) {
+        } else if (bookingStatusDto == BookingStatusDto.REJECTED) {
             bookings = bookingRepository.findByItemOwner(userId, BookingStatus.REJECTED);
-        }
-        else if (bookingStatusDto == BookingStatusDto.PAST) {
+        } else if (bookingStatusDto == BookingStatusDto.PAST) {
             bookings = bookingRepository.findByItemOwnerInPast(userId, LocalDateTime.now());
-        }
-        else if (bookingStatusDto == BookingStatusDto.CURRENT) {
+        } else if (bookingStatusDto == BookingStatusDto.CURRENT) {
             bookings = bookingRepository.findByItemOwnerCurrent(userId, LocalDateTime.now());
-        }
-        else if (bookingStatusDto == BookingStatusDto.FUTURE) {
+        } else if (bookingStatusDto == BookingStatusDto.FUTURE) {
             bookings = bookingRepository.findByItemOwnerInFuture(userId, LocalDateTime.now());
-        }
-        else {
+        } else {
             throw new RuntimeException("Not supported");
         }
 

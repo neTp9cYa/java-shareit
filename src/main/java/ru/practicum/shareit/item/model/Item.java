@@ -19,8 +19,12 @@ import ru.practicum.shareit.user.model.User;
 
 @Entity
 @Table(name = "ITEMS")
-@Getter @Setter @ToString @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

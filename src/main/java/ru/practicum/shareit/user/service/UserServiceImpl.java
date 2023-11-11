@@ -37,8 +37,7 @@ public class UserServiceImpl implements UserService {
         User storedUser;
         try {
             storedUser = userRepository.save(user);
-        }
-        catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
         }
 
@@ -50,9 +49,9 @@ public class UserServiceImpl implements UserService {
 
         // validate if user exists
         final User storedUser = userRepository.findById(userDto.getId())
-                .orElseThrow(() -> {
-                    throw new NotFoundException(String.format("User with id $d not found", userDto.getId()));
-                });
+            .orElseThrow(() -> {
+                throw new NotFoundException(String.format("User with id $d not found", userDto.getId()));
+            });
 
         final User user = userMapper.toUser(userDto);
 
@@ -66,8 +65,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             userRepository.save(storedUser);
-        }
-        catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
         }
 

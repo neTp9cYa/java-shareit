@@ -15,8 +15,12 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "USERS")
-@Getter @Setter @ToString @Builder(toBuilder = true)
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.model;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;

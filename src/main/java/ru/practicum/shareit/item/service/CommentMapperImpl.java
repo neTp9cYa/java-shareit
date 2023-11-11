@@ -5,9 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.CommentCreateDto;
 import ru.practicum.shareit.item.dto.CommentViewDto;
-import ru.practicum.shareit.item.dto.ItemViewDto;
 import ru.practicum.shareit.item.model.Comment;
-import ru.practicum.shareit.item.model.Item;
 
 @Component
 public class CommentMapperImpl implements CommentMapper {
