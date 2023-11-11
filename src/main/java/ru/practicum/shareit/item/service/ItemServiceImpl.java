@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 
         final ItemViewDto itemViewDto = itemMapper.toItemViewDto(item);
 
-        if (item.getOwner().getId() == userId) {
+        if (item.getOwner().getId().equals(userId)) {
             populateLastNextBooking(itemId, itemViewDto);
         }
 

@@ -35,7 +35,7 @@ public class BookingServiceImpl implements BookingService {
             .orElseThrow(
                 () -> new NotFoundException(String.format("Item with id %d not found", bookingCreateDto.getItemId())));
 
-        if (item.getOwner().getId() == userId) {
+        if (item.getOwner().getId().equals(userId)) {
             throw new NotFoundException(String.format("Item with id %d not found", bookingCreateDto.getItemId()));
         }
 
@@ -75,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
             .orElseThrow(() -> new NotFoundException(
                 String.format("Booking with id %d not found", bookingId)));
 
-        if (storedBooking.getItem().getOwner().getId() != userId) {
+        if (!storedBooking.getItem().getOwner().getId().equals(userId)) {
             throw new NotFoundException(
                 String.format("Booking with id %d not found", bookingId));
         }
@@ -99,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
             .orElseThrow(() -> new NotFoundException(
                 String.format("Booking with id %d not found", bookingId)));
 
-        if (booking.getItem().getOwner().getId() != userId && booking.getBooker().getId() != userId) {
+        if (!booking.getItem().getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
             throw new NotFoundException(
                 String.format("Booking with id %d not found", bookingId));
         }
