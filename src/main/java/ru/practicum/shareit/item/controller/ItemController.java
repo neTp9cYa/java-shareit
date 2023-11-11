@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
+import ru.practicum.shareit.item.dto.CommentCreateDto;
+import ru.practicum.shareit.item.dto.CommentViewDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemViewDto;
 import ru.practicum.shareit.item.dto.ItemDtoCreate;
 import ru.practicum.shareit.item.service.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
@@ -29,14 +33,15 @@ public class ItemController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<ItemDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId) {
+    public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId) {
         return itemService.findByUserId(userId);
     }
 
     @GetMapping("/{itemId}")
     @LogInputOutputAnnotaion
-    public ItemDto findById(@PathVariable @NotNull final Integer itemId) {
-        return itemService.findById(itemId);
+    public ItemViewDto findById(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+                                @PathVariable @NotNull final Integer itemId) {
+        return itemService.findById(userId, itemId);
     }
 
     @GetMapping("/search")
@@ -59,5 +64,13 @@ public class ItemController {
                           @RequestBody final ItemDto itemDto) {
         itemDto.setId(itemId);
         return itemService.update(userId, itemDto);
+    }
+
+    @PostMapping("{itemId}/comment")
+    @LogInputOutputAnnotaion
+    public CommentViewDto addComment(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+                                     @PathVariable @NotNull final Integer itemId,
+                                     @RequestBody @Valid final CommentCreateDto commentCreateDto) {
+        return itemService.addComment(userId, itemId, commentCreateDto);
     }
 }

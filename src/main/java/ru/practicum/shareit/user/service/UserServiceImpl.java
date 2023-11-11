@@ -2,7 +2,9 @@ package ru.practicum.shareit.user.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.common.exception.ConflictException;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -31,7 +33,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(final UserDto userDto) {
         final User user = userMapper.toUser(userDto);
-        final User storedUser = userRepository.create(user);
+
+        User storedUser;
+        try {
+            storedUser = userRepository.save(user);
+        }
+        catch (DataIntegrityViolationException e) {
+            throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
+        }
+
         return userMapper.toUserDto(storedUser);
     }
 
@@ -40,9 +50,9 @@ public class UserServiceImpl implements UserService {
 
         // validate if user exists
         final User storedUser = userRepository.findById(userDto.getId())
-            .orElseThrow(() -> {
-                throw new NotFoundException(String.format("User with id $d not found", userDto.getId()));
-            });
+                .orElseThrow(() -> {
+                    throw new NotFoundException(String.format("User with id $d not found", userDto.getId()));
+                });
 
         final User user = userMapper.toUser(userDto);
 
@@ -54,12 +64,18 @@ public class UserServiceImpl implements UserService {
             storedUser.setEmail(user.getEmail());
         }
 
-        userRepository.update(storedUser);
+        try {
+            userRepository.save(storedUser);
+        }
+        catch (DataIntegrityViolationException e) {
+            throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
+        }
+
         return userMapper.toUserDto(storedUser);
     }
 
     @Override
     public void delete(final int userId) {
-        userRepository.delete(userId);
+        userRepository.deleteById(userId);
     }
 }
