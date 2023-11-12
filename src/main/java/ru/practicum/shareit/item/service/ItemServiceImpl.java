@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.common.exception.ValidationException;
@@ -69,10 +70,14 @@ public class ItemServiceImpl implements ItemService {
         Booking lastBooking = null;
         for (final Booking booking : bookings) {
             if (booking.getStart().isAfter(now)) {
-                nextBooking = booking;
+                if (booking.getStatus() == BookingStatus.APPROVED) {
+                    nextBooking = booking;
+                }
             } else {
-                lastBooking = booking;
-                break;
+                if (booking.getStatus() == BookingStatus.APPROVED) {
+                    lastBooking = booking;
+                    break;
+                }
             }
         }
         if (lastBooking != null) {
