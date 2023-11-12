@@ -11,6 +11,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Query("select comment " +
         "from Comment as comment " +
         "where comment.item.id = :itemId " +
-        "order by id")
+        "order by comment.id")
     List<Comment> findByItem(final Integer itemId);
 }

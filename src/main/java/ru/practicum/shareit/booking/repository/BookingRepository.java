@@ -35,7 +35,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("select booking " +
         "from Booking as booking " +
-        "where booking.booker.id = :userId and booking.start >= :now and booking.end <= :now " +
+        "where booking.booker.id = :userId and booking.start <= :now and booking.end >= :now " +
         "order by booking.start desc")
     List<Booking> findOwnCurrent(final Integer userId, final LocalDateTime now);
 
@@ -66,7 +66,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("select booking " +
         "from Booking as booking " +
-        "where booking.item.owner.id = :userId and booking.start >= :now and booking.end <= :now " +
+        "where booking.item.owner.id = :userId and booking.start <= :now and booking.end >= :now " +
         "order by booking.start desc")
     List<Booking> findByItemOwnerCurrent(final Integer userId, final LocalDateTime now);
 
