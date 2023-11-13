@@ -17,6 +17,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @EntityGraph(attributePaths = {"item", "booker"})
     Optional<Booking> findById(Integer id);
 
+    @EntityGraph(attributePaths = {"item"})
+    public List<Booking> findByItem_Owner_Id(final Integer userId);
+
     @Query("select count(booking.id) " +
         "from Booking as booking " +
         "where booking.booker.id = :userId and booking.item.id = :itemId and booking.start < :now")

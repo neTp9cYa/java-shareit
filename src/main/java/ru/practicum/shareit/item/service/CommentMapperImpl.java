@@ -25,6 +25,9 @@ public class CommentMapperImpl implements CommentMapper {
 
     @Override
     public List<CommentViewDto> toCommentViewDtoList(final List<Comment> comments) {
+        if (comments == null) {
+            return null;
+        }
         return comments.stream().map(this::toCommentViewDto).collect(Collectors.toList());
     }
 
