@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
-import ru.practicum.shareit.booking.dto.BookingStatusDto;
+import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
@@ -51,14 +51,14 @@ public class BookingController {
     @GetMapping()
     @LogInputOutputAnnotaion
     public List<BookingViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                        @RequestParam(defaultValue = "ALL") final BookingStatusDto state) {
+                                        @RequestParam(defaultValue = "ALL") final BookingState state) {
         return bookingService.findOwn(userId, state);
     }
 
     @GetMapping("owner")
     @LogInputOutputAnnotaion
     public List<BookingViewDto> findByItemOwner(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                                @RequestParam(defaultValue = "ALL") final BookingStatusDto state) {
+                                                @RequestParam(defaultValue = "ALL") final BookingState state) {
         return bookingService.findByItemOwner(userId, state);
     }
 }

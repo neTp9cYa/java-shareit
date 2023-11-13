@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
-import ru.practicum.shareit.booking.dto.BookingStatusDto;
+import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -29,7 +29,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingViewDto create(final Integer userId, final BookingCreateDto bookingCreateDto) {
+    public BookingViewDto create(final int userId, final BookingCreateDto bookingCreateDto) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingViewDto approveOrReject(final Integer userId, final Integer bookingId, final Boolean approved) {
+    public BookingViewDto approveOrReject(final int userId, final Integer bookingId, final Boolean approved) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
             .orElseThrow(() -> new NotFoundException(
                 String.format("Booking with id %d not found", bookingId)));
 
-        if (storedBooking.getItem().getOwner().getId().intValue() != userId.intValue()) {
+        if (storedBooking.getItem().getOwner().getId().intValue() != userId) {
             throw new NotFoundException(
                 String.format("Booking with id %d not found", bookingId));
         }
@@ -82,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookingViewDto findById(Integer userId, Integer bookingId) {
+    public BookingViewDto findById(final int userId, final Integer bookingId) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
@@ -90,8 +90,8 @@ public class BookingServiceImpl implements BookingService {
             .orElseThrow(() -> new NotFoundException(
                 String.format("Booking with id %d not found", bookingId)));
 
-        if (booking.getItem().getOwner().getId().intValue() != userId.intValue() &&
-            booking.getBooker().getId().intValue() != userId.intValue()) {
+        if (booking.getItem().getOwner().getId().intValue() != userId &&
+            booking.getBooker().getId().intValue() != userId) {
             throw new NotFoundException(
                 String.format("Booking with id %d not found", bookingId));
         }
@@ -101,23 +101,23 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingViewDto> findOwn(final Integer userId, final BookingStatusDto bookingStatusDto) {
+    public List<BookingViewDto> findOwn(final int userId, final BookingState bookingStatusDto) {
         userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         List<Booking> bookings = null;
 
-        if (bookingStatusDto == BookingStatusDto.ALL) {
+        if (bookingStatusDto == BookingState.ALL) {
             bookings = bookingRepository.findOwn(userId);
-        } else if (bookingStatusDto == BookingStatusDto.WAITING) {
+        } else if (bookingStatusDto == BookingState.WAITING) {
             bookings = bookingRepository.findOwn(userId, BookingStatus.WAITING);
-        } else if (bookingStatusDto == BookingStatusDto.REJECTED) {
+        } else if (bookingStatusDto == BookingState.REJECTED) {
             bookings = bookingRepository.findOwn(userId, BookingStatus.REJECTED);
-        } else if (bookingStatusDto == BookingStatusDto.PAST) {
+        } else if (bookingStatusDto == BookingState.PAST) {
             bookings = bookingRepository.findOwnInPast(userId, LocalDateTime.now());
-        } else if (bookingStatusDto == BookingStatusDto.CURRENT) {
+        } else if (bookingStatusDto == BookingState.CURRENT) {
             bookings = bookingRepository.findOwnCurrent(userId, LocalDateTime.now());
-        } else if (bookingStatusDto == BookingStatusDto.FUTURE) {
+        } else if (bookingStatusDto == BookingState.FUTURE) {
             bookings = bookingRepository.findOwnInFuture(userId, LocalDateTime.now());
         } else {
             throw new RuntimeException("Not supported");
@@ -128,23 +128,23 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingViewDto> findByItemOwner(final Integer userId, final BookingStatusDto bookingStatusDto) {
+    public List<BookingViewDto> findByItemOwner(final int userId, final BookingState bookingStatusDto) {
         userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         List<Booking> bookings = null;
 
-        if (bookingStatusDto == BookingStatusDto.ALL) {
+        if (bookingStatusDto == BookingState.ALL) {
             bookings = bookingRepository.findByItemOwner(userId);
-        } else if (bookingStatusDto == BookingStatusDto.WAITING) {
+        } else if (bookingStatusDto == BookingState.WAITING) {
             bookings = bookingRepository.findByItemOwner(userId, BookingStatus.WAITING);
-        } else if (bookingStatusDto == BookingStatusDto.REJECTED) {
+        } else if (bookingStatusDto == BookingState.REJECTED) {
             bookings = bookingRepository.findByItemOwner(userId, BookingStatus.REJECTED);
-        } else if (bookingStatusDto == BookingStatusDto.PAST) {
+        } else if (bookingStatusDto == BookingState.PAST) {
             bookings = bookingRepository.findByItemOwnerInPast(userId, LocalDateTime.now());
-        } else if (bookingStatusDto == BookingStatusDto.CURRENT) {
+        } else if (bookingStatusDto == BookingState.CURRENT) {
             bookings = bookingRepository.findByItemOwnerCurrent(userId, LocalDateTime.now());
-        } else if (bookingStatusDto == BookingStatusDto.FUTURE) {
+        } else if (bookingStatusDto == BookingState.FUTURE) {
             bookings = bookingRepository.findByItemOwnerInFuture(userId, LocalDateTime.now());
         } else {
             throw new RuntimeException("Not supported");
