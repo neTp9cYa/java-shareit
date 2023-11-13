@@ -118,8 +118,7 @@ public class ItemServiceImpl implements ItemService {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
-        final Item item = itemMapper.toItem(itemDto);
-        item.setOwner(user);
+        final Item item = itemMapper.toItem(itemDto, user);
 
         final Item storedItem = itemRepository.save(item);
         return itemMapper.toItemDto(storedItem);
@@ -146,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
                 String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
         }
 
-        final Item item = itemMapper.toItem(itemDto);
+        final Item item = itemMapper.toItem(itemDto, null);
 
         // update passed fields to new values
         if (item.getName() != null) {
@@ -178,10 +177,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException(String.format("Add comment for not used item"));
         }
 
-        final Comment comment = commentMapper.toComment(commentCreateDto);
-        comment.setAuthor(user);
-        comment.setItem(item);
-        comment.setCreated(LocalDateTime.now());
+        final Comment comment = commentMapper.toComment(commentCreateDto, user, item);
 
         commentRepository.save(comment);
         return commentMapper.toCommentViewDto(comment);

@@ -4,13 +4,14 @@ import java.util.List;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemViewDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 public interface ItemMapper {
-    ItemDto toItemDto(Item item);
+    ItemDto toItemDto(final Item item);
 
-    ItemViewDto toItemViewDto(Item item);
+    ItemViewDto toItemViewDto(final Item item);
 
-    List<ItemDto> toItemDtoList(List<Item> items);
+    List<ItemDto> toItemDtoList(final List<Item> items);
 
-    Item toItem(ItemDto itemDto);
+    Item toItem(final ItemDto itemDto, final User owner);
 }

@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserMapper;
 
 @Component
@@ -35,10 +38,13 @@ public class BookingMapperImpl implements BookingMapper {
     }
 
     @Override
-    public Booking toBooking(final BookingCreateDto bookingCreateDto) {
+    public Booking toBooking(final BookingCreateDto bookingCreateDto, final User user, final Item item) {
         return Booking.builder()
             .start(bookingCreateDto.getStart())
             .end(bookingCreateDto.getEnd())
+            .status(BookingStatus.WAITING)
+            .booker(user)
+            .item(item)
             .build();
     }
 }

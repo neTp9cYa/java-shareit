@@ -4,11 +4,13 @@ import java.util.List;
 import ru.practicum.shareit.item.dto.CommentCreateDto;
 import ru.practicum.shareit.item.dto.CommentViewDto;
 import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 public interface CommentMapper {
-    CommentViewDto toCommentViewDto(Comment comment);
+    CommentViewDto toCommentViewDto(final Comment comment);
 
-    List<CommentViewDto> toCommentViewDtoList(List<Comment> comments);
+    List<CommentViewDto> toCommentViewDtoList(final List<Comment> comments);
 
-    Comment toComment(CommentCreateDto commentCreateDto);
+    Comment toComment(final CommentCreateDto commentCreateDto, final User user, final Item item);
 }

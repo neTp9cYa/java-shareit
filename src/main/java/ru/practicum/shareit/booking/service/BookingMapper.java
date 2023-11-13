@@ -4,11 +4,13 @@ import java.util.List;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 public interface BookingMapper {
-    BookingViewDto toBookingViewDto(Booking booking);
+    BookingViewDto toBookingViewDto(final Booking booking);
 
-    List<BookingViewDto> toBookingViewDtoList(List<Booking> bookings);
+    List<BookingViewDto> toBookingViewDtoList(final List<Booking> bookings);
 
-    Booking toBooking(BookingCreateDto bookingCreateDto);
+    Booking toBooking(final BookingCreateDto bookingCreateDto, final User user, final Item item);
 }

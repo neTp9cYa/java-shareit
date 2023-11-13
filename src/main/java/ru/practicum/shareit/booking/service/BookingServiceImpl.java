@@ -39,10 +39,7 @@ public class BookingServiceImpl implements BookingService {
 
         validateBookingCreation(user, item);
 
-        final Booking booking = bookingMapper.toBooking(bookingCreateDto);
-        booking.setStatus(BookingStatus.WAITING);
-        booking.setBooker(user);
-        booking.setItem(item);
+        final Booking booking = bookingMapper.toBooking(bookingCreateDto, user, item);
 
         final Booking storedBooking = bookingRepository.save(booking);
         return bookingMapper.toBookingViewDto(storedBooking);
