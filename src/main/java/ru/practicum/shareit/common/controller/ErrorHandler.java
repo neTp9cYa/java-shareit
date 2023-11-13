@@ -51,7 +51,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
         log.error("Unexpected error occured", e);
         return new ErrorDto(
