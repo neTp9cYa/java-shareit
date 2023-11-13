@@ -44,18 +44,6 @@ public class BookingServiceImpl implements BookingService {
         }
 
         final LocalDateTime now = LocalDateTime.now();
-        if (bookingCreateDto.getStart().isBefore(now)) {
-            throw new ValidationException("Start date is in past");
-        }
-        if (bookingCreateDto.getEnd().isBefore(now)) {
-            throw new ValidationException("End date is in past");
-        }
-        if (bookingCreateDto.getEnd().isEqual(bookingCreateDto.getStart())) {
-            throw new ValidationException("End date equals start date");
-        }
-        if (bookingCreateDto.getEnd().isBefore(bookingCreateDto.getStart())) {
-            throw new ValidationException("End date is earlier than start date");
-        }
 
         final Booking booking = bookingMapper.toBooking(bookingCreateDto);
         booking.setStatus(BookingStatus.WAITING);
