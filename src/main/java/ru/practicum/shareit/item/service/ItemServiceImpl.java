@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
 
         final ItemViewDto itemViewDto = itemMapper.toItemViewDto(item);
 
-        if (item.getOwner().getId().equals(userId)) {
+        if (item.getOwner().getId().intValue() == userId.intValue()) {
             populateLastNextBooking(itemId, itemViewDto);
         }
 
@@ -135,7 +135,7 @@ public class ItemServiceImpl implements ItemService {
             });
 
         // check if user is owner of item
-        if (!storedItem.getOwner().getId().equals(userId)) {
+        if (storedItem.getOwner().getId() != userId.intValue()) {
             throw new NotFoundException(
                 String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
         }
