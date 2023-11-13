@@ -6,11 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.model.Item;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
-    @Query("select item " +
-        "from Item as item " +
-        "where item.owner.id = :userId " +
-        "order by id")
-    List<Item> findByUserId(final Integer userId);
+
+    List<Item> findByOwner_Id(final Integer userId);
 
     @Query("select item " +
         "from Item as item " +

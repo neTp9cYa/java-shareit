@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
@@ -38,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<ItemViewDto> findByUserId(final Integer userId) {
-        final List<Item> items = itemRepository.findByUserId(userId);
+        final List<Item> items = itemRepository.findByOwner_Id(userId);
         final List<ItemViewDto> itemViewDtos = new ArrayList<>();
         for (final Item item : items) {
             final ItemViewDto itemViewDto = itemMapper.toItemViewDto(item);
@@ -60,7 +61,9 @@ public class ItemServiceImpl implements ItemService {
             populateLastNextBooking(itemId, itemViewDto);
         }
 
-        final List<Comment> comments = commentRepository.findByItem(item.getId());
+        final List<Comment> comments = commentRepository.findByItem_Id(
+            item.getId(),
+            Sort.by(Sort.Direction.ASC, "id"));
         itemViewDto.setComments(commentMapper.toCommentViewDtoList(comments));
 
         return itemViewDto;
