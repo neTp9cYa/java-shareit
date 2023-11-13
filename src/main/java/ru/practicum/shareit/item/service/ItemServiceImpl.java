@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -35,6 +36,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentMapper commentMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemViewDto> findByUserId(final Integer userId) {
         final List<Item> items = itemRepository.findByUserId(userId);
         final List<ItemViewDto> itemViewDtos = new ArrayList<>();
@@ -47,6 +49,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemViewDto findById(final Integer userId, final Integer itemId) {
         final Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundException(String.format("Item with id %d not found", itemId)));
@@ -99,6 +102,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> search(final String text) {
         if (text == null || text.isEmpty()) {
             return Collections.<ItemDto>emptyList();
@@ -108,6 +112,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto create(final Integer userId, final ItemDto itemDto) {
 
         final User user = userRepository.findById(userId)
@@ -121,6 +126,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto update(final Integer userId, final ItemDto itemDto) {
 
         // check if user exists
@@ -158,6 +164,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentViewDto addComment(final Integer userId, final Integer itemId,
                                      final CommentCreateDto commentCreateDto) {
         final User user = userRepository.findById(userId)

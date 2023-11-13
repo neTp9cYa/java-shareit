@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingStatusDto;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
@@ -27,6 +28,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
+    @Transactional
     public BookingViewDto create(final Integer userId, final BookingCreateDto bookingCreateDto) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -35,15 +37,7 @@ public class BookingServiceImpl implements BookingService {
             .orElseThrow(
                 () -> new NotFoundException(String.format("Item with id %d not found", bookingCreateDto.getItemId())));
 
-        if (item.getOwner().getId().intValue() == userId.intValue()) {
-            throw new NotFoundException(String.format("Item with id %d not found", bookingCreateDto.getItemId()));
-        }
-
-        if (!item.getAvailable()) {
-            throw new ValidationException(String.format("Item with id %d is not available", item.getId()));
-        }
-
-        final LocalDateTime now = LocalDateTime.now();
+        validateBookingCreation(user, item);
 
         final Booking booking = bookingMapper.toBooking(bookingCreateDto);
         booking.setStatus(BookingStatus.WAITING);
@@ -54,7 +48,18 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingViewDto(storedBooking);
     }
 
+    private void validateBookingCreation(final User user, final Item item) throws ValidationException {
+        if (item.getOwner().getId().intValue() == user.getId().intValue()) {
+            throw new NotFoundException(String.format("Item with id %d not found", item.getId()));
+        }
+
+        if (!item.getAvailable()) {
+            throw new ValidationException(String.format("Item with id %d is not available", item.getId()));
+        }
+    }
+
     @Override
+    @Transactional
     public BookingViewDto approveOrReject(final Integer userId, final Integer bookingId, final Boolean approved) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -79,6 +84,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingViewDto findById(Integer userId, Integer bookingId) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -97,6 +103,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingViewDto> findOwn(final Integer userId, final BookingStatusDto bookingStatusDto) {
         userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -123,6 +130,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingViewDto> findByItemOwner(final Integer userId, final BookingStatusDto bookingStatusDto) {
         userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
