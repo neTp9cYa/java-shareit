@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemViewDto> findByUserId(final Integer userId) {
         final List<Item> items = itemRepository.findByOwner_Id(userId);
 
-        final List<Booking> bookings = bookingRepository.findByItem_Owner_Id(userId);
+        final List<Booking> bookings = bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED);
         final Pair<Map<Integer, Booking>, Map<Integer, Booking>> nearestBookings = getNearestBookings(bookings);
         final Map<Integer, Booking> lastBookings = nearestBookings.getFirst();
         final Map<Integer, Booking> nextBookings = nearestBookings.getSecond();
@@ -64,10 +64,6 @@ public class ItemServiceImpl implements ItemService {
 
         final LocalDateTime now = LocalDateTime.now();
         for (final Booking booking : bookings) {
-            if (booking.getStatus() != BookingStatus.APPROVED) {
-                continue;
-            }
-
             if (booking.getStart().isAfter(now)) {
                 final Booking currentNextBooking = nextBookings.getOrDefault(booking.getItem().getId(), null);
                 if (currentNextBooking == null) {
@@ -94,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
         final Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundException(String.format("Item with id %d not found", itemId)));
 
-        final List<Booking> bookings = bookingRepository.findByItem_Owner_Id(userId);
+        final List<Booking> bookings = bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED);
         final Pair<Map<Integer, Booking>, Map<Integer, Booking>> nearestBookings = getNearestBookings(bookings);
         final Map<Integer, Booking> lastBookings = nearestBookings.getFirst();
         final Map<Integer, Booking> nextBookings = nearestBookings.getSecond();
