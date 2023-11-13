@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.common.exception.ConflictException;
@@ -37,14 +36,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto create(final UserDto userDto) {
         final User user = userMapper.toUser(userDto);
-
-        User storedUser;
-        try {
-            storedUser = userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
-        }
-
+        final User storedUser = userRepository.save(user);
         return userMapper.toUserDto(storedUser);
     }
 
@@ -68,12 +60,7 @@ public class UserServiceImpl implements UserService {
             storedUser.setEmail(user.getEmail());
         }
 
-        try {
-            userRepository.save(storedUser);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException(String.format("User with email %s already exists", user.getEmail()));
-        }
-
+        userRepository.save(storedUser);
         return userMapper.toUserDto(storedUser);
     }
 
