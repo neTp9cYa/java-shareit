@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -16,12 +17,14 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> findAll() {
         final List<User> users = userRepository.findAll();
         return userMapper.toUserDtoList(users);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto findById(final int userId) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -29,13 +32,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto create(final UserDto userDto) {
         final User user = userMapper.toUser(userDto);
-        final User storedUser = userRepository.create(user);
+        final User storedUser = userRepository.save(user);
         return userMapper.toUserDto(storedUser);
     }
 
     @Override
+    @Transactional
     public UserDto update(final UserDto userDto) {
 
         // validate if user exists
@@ -54,12 +59,13 @@ public class UserServiceImpl implements UserService {
             storedUser.setEmail(user.getEmail());
         }
 
-        userRepository.update(storedUser);
+        userRepository.save(storedUser);
         return userMapper.toUserDto(storedUser);
     }
 
     @Override
+    @Transactional
     public void delete(final int userId) {
-        userRepository.delete(userId);
+        userRepository.deleteById(userId);
     }
 }

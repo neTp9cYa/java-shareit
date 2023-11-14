@@ -1,12 +1,28 @@
 package ru.practicum.shareit.item.service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.common.exception.NotFoundException;
+import ru.practicum.shareit.common.exception.ValidationException;
+import ru.practicum.shareit.item.dto.CommentCreateDto;
+import ru.practicum.shareit.item.dto.CommentViewDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemViewDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -18,21 +34,82 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     @Override
-    public List<ItemDto> findByUserId(final Integer userId) {
-        final List<Item> items = itemRepository.findByUserId(userId);
-        return itemMapper.toItemDtoList(items);
+    @Transactional(readOnly = true)
+    public List<ItemViewDto> findByUserId(final Integer userId) {
+        final List<Item> items = itemRepository.findByOwner_Id(userId);
+
+        final List<Booking> bookings = bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED);
+        final Pair<Map<Integer, Booking>, Map<Integer, Booking>> nearestBookings = getNearestBookings(bookings);
+        final Map<Integer, Booking> lastBookings = nearestBookings.getFirst();
+        final Map<Integer, Booking> nextBookings = nearestBookings.getSecond();
+
+        final List<ItemViewDto> itemViewDtos = items.stream()
+            .map(item -> itemMapper.toItemViewDto(
+                item,
+                lastBookings.getOrDefault(item.getId(), null),
+                nextBookings.getOrDefault(item.getId(), null)))
+            .collect(Collectors.toList());
+
+        return itemViewDtos;
+    }
+
+    private Pair<Map<Integer, Booking>, Map<Integer, Booking>> getNearestBookings(final List<Booking> bookings) {
+        final Map<Integer, Booking> lastBookings = new HashMap<>();
+        final Map<Integer, Booking> nextBookings = new HashMap<>();
+
+        final LocalDateTime now = LocalDateTime.now();
+        for (final Booking booking : bookings) {
+            if (booking.getStart().isAfter(now)) {
+                final Booking currentNextBooking = nextBookings.getOrDefault(booking.getItem().getId(), null);
+                if (currentNextBooking == null) {
+                    nextBookings.put(booking.getItem().getId(), booking);
+                } else if (booking.getStart().isBefore(currentNextBooking.getStart())) {
+                    nextBookings.put(booking.getItem().getId(), booking);
+                }
+            } else {
+                final Booking currentLastBooking = lastBookings.getOrDefault(booking.getItem().getId(), null);
+                if (currentLastBooking == null) {
+                    lastBookings.put(booking.getItem().getId(), booking);
+                } else if (booking.getStart().isAfter(currentLastBooking.getStart())) {
+                    lastBookings.put(booking.getItem().getId(), booking);
+                }
+            }
+        }
+
+        return Pair.of(lastBookings, nextBookings);
     }
 
     @Override
-    public ItemDto findById(final Integer itemId) {
+    @Transactional(readOnly = true)
+    public ItemViewDto findById(final Integer userId, final Integer itemId) {
         final Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundException(String.format("Item with id %d not found", itemId)));
-        return itemMapper.toItemDto(item);
+
+        final List<Booking> bookings = bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED);
+        final Pair<Map<Integer, Booking>, Map<Integer, Booking>> nearestBookings = getNearestBookings(bookings);
+        final Map<Integer, Booking> lastBookings = nearestBookings.getFirst();
+        final Map<Integer, Booking> nextBookings = nearestBookings.getSecond();
+
+        final List<Comment> comments = commentRepository.findByItem_Id(
+            item.getId(),
+            Sort.by(Sort.Direction.ASC, "id"));
+
+        final ItemViewDto itemViewDto = itemMapper.toItemViewDto(
+            item,
+            lastBookings.getOrDefault(item.getId(), null),
+            nextBookings.getOrDefault(item.getId(), null),
+            comments);
+
+        return itemViewDto;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> search(final String text) {
         if (text == null || text.isEmpty()) {
             return Collections.<ItemDto>emptyList();
@@ -42,24 +119,24 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto create(final Integer userId, final ItemDto itemDto) {
 
-        // check if user exists
-        userRepository.findById(userId)
+        final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
-        final Item item = itemMapper.toItem(itemDto);
-        item.setOwner(User.builder().id(userId).build());
+        final Item item = itemMapper.toItem(itemDto, user);
 
-        final Item storedItem = itemRepository.create(item);
+        final Item storedItem = itemRepository.save(item);
         return itemMapper.toItemDto(storedItem);
     }
 
     @Override
+    @Transactional
     public ItemDto update(final Integer userId, final ItemDto itemDto) {
 
         // check if user exists
-        userRepository.findById(userId)
+        final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         // check if item exists
@@ -70,13 +147,12 @@ public class ItemServiceImpl implements ItemService {
             });
 
         // check if user is owner of item
-        if (!storedItem.getOwner().getId().equals(userId)) {
+        if (storedItem.getOwner().getId() != userId.intValue()) {
             throw new NotFoundException(
                 String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
         }
 
-        final Item item = itemMapper.toItem(itemDto);
-        item.setOwner(User.builder().id(userId).build());
+        final Item item = itemMapper.toItem(itemDto, null);
 
         // update passed fields to new values
         if (item.getName() != null) {
@@ -89,7 +165,28 @@ public class ItemServiceImpl implements ItemService {
             storedItem.setAvailable(item.getAvailable());
         }
 
-        itemRepository.update(storedItem);
+        itemRepository.save(storedItem);
         return itemMapper.toItemDto(storedItem);
+    }
+
+    @Override
+    @Transactional
+    public CommentViewDto addComment(final Integer userId, final Integer itemId,
+                                     final CommentCreateDto commentCreateDto) {
+        final User user = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
+
+        final Item item = itemRepository.findById(itemId)
+            .orElseThrow(() -> new NotFoundException(String.format("Item with id %d not found", itemId)));
+
+        final int usedCount = bookingRepository.usedCount(userId, itemId, LocalDateTime.now());
+        if (usedCount == 0) {
+            throw new ValidationException(String.format("Add comment for not used item"));
+        }
+
+        final Comment comment = commentMapper.toComment(commentCreateDto, user, item);
+
+        commentRepository.save(comment);
+        return commentMapper.toCommentViewDto(comment);
     }
 }
