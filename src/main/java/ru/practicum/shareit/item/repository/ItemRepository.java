@@ -10,10 +10,18 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     List<Item> findByOwner_Id(final Integer userId);
 
+    List<Item> findByRequest_Id(final Integer requestId);
+
     @Query("select item " +
         "from Item as item " +
         "where item.available = true and (lower(item.name) like lower(concat('%', :text,'%')) or lower(description) like lower(concat('%', :text,'%')))")
     @EntityGraph(attributePaths = {"owner"})
     List<Item> search(final String text);
+
+    @EntityGraph(attributePaths = {"request"})
+    List<Item> findByRequest_Owner_Id(final int userId);
+
+    @EntityGraph(attributePaths = {"request"})
+    List<Item> findByRequest_Owner_IdNot(final int userId);
 
 }

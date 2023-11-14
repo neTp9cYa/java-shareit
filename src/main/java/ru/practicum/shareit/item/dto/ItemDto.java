@@ -23,6 +23,8 @@ public class ItemDto {
     private String description;
 
     @NotNull(groups = ItemDtoCreate.class)
-    //@AssertTrue(groups = ItemDtoCreate.class)
     private Boolean available;
+
+    @Null(groups = ItemDtoUpdate.class)
+    private Integer requestId;
 }

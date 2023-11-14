@@ -24,6 +24,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -37,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -126,6 +129,12 @@ public class ItemServiceImpl implements ItemService {
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         final Item item = itemMapper.toItem(itemDto, user);
+
+        if (itemDto.getRequestId() != null) {
+            final ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                .orElseThrow(() -> new NotFoundException(String.format("Item request with id %d not found", itemDto.getRequestId())));
+            item.setRequest(itemRequest);
+        }
 
         final Item storedItem = itemRepository.save(item);
         return itemMapper.toItemDto(storedItem);
