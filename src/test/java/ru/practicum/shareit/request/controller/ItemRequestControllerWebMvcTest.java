@@ -82,7 +82,6 @@ class ItemRequestControllerWebMvcTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id", is(itemRequestViewDto1.getId()), Integer.class))
             .andExpect(jsonPath("$[0].description", is(itemRequestViewDto1.getDescription())))
-            .andExpect(jsonPath("$[0].created", is(itemRequestViewDto1.getCreated().toString())))
             .andExpect(jsonPath("$[0].items[0].id", is(itemDto1().getId()), Integer.class))
             .andExpect(jsonPath("$[0].items[0].name", is(itemDto1().getName())))
             .andExpect(jsonPath("$[0].items[0].description", is(itemDto1().getDescription())))

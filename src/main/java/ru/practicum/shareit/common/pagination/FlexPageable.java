@@ -5,13 +5,13 @@ import org.springframework.data.domain.Sort;
 
 public class FlexPageable implements Pageable {
 
-    private final int offset;
+    private final long offset;
     private final int limit;
 
     // this attribute can be let out if you don't need it
     private Sort sort;
 
-    protected FlexPageable(int offset, int limit, Sort sort) {
+    protected FlexPageable(final long offset, final int limit, Sort sort) {
         if (offset < 0)
             throw new IllegalArgumentException("Offset must not be less than zero!");
 
@@ -52,7 +52,7 @@ public class FlexPageable implements Pageable {
 
     @Override
     public Pageable next() {
-        return null;
+        return new FlexPageable(this.getOffset() + this.getPageSize(), this.getPageSize(), this.getSort());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class FlexPageable implements Pageable {
 
     @Override
     public Pageable withPage(int pageNumber) {
-        return null;
+        return new FlexPageable(pageNumber * this.getPageSize(), this.getPageSize(), this.getSort());
     }
 
     @Override
