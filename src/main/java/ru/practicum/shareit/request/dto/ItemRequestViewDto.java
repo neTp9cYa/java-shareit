@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.ToString;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -20,5 +21,7 @@ public class ItemRequestViewDto {
     private int id;
     private String description;
     private LocalDateTime created;
+
+    @Singular
     private List<ItemDto> items;
 }

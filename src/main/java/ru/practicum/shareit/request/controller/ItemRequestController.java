@@ -41,10 +41,11 @@ public class ItemRequestController {
 
     @GetMapping("all")
     //@LogInputOutputAnnotaion
-    public List<ItemRequestViewDto> findSomeoneElses(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                                     @RequestParam(defaultValue = "0") @Min(0) final int from,
-                                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1)
-                                                     final Integer size) {
+    public List<ItemRequestViewDto> findSomeoneElses(
+        @RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+
         return itemRequestService.findSomeoneElses(userId, FlexPageRequest.of(from, size));
     }
 
