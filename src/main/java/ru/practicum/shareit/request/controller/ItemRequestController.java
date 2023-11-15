@@ -1,12 +1,9 @@
 package ru.practicum.shareit.request.controller;
 
 import java.util.List;
-import javax.validation.ValidationException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,8 +42,9 @@ public class ItemRequestController {
     @GetMapping("all")
     //@LogInputOutputAnnotaion
     public List<ItemRequestViewDto> findSomeoneElses(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                                            @RequestParam(defaultValue = "0") @Min(0) final int from,
-                                                            @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+                                                     @RequestParam(defaultValue = "0") @Min(0) final int from,
+                                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1)
+                                                     final Integer size) {
         return itemRequestService.findSomeoneElses(userId, FlexPageRequest.of(from, size));
     }
 

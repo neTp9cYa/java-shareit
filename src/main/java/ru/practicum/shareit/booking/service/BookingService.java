@@ -15,5 +15,6 @@ public interface BookingService {
 
     List<BookingViewDto> findOwn(final int userId, final BookingState bookingStatusDto, final Pageable pageable);
 
-    List<BookingViewDto> findByItemOwner(final int userId, final BookingState bookingStatusDto, final Pageable pageable);
+    List<BookingViewDto> findByItemOwner(final int userId, final BookingState bookingStatusDto,
+                                         final Pageable pageable);
 }

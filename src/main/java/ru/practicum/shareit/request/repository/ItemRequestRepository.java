@@ -9,5 +9,6 @@ import ru.practicum.shareit.request.model.ItemRequest;
 @Repository
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Integer> {
     List<ItemRequest> findByOwner_Id(final int userId);
+
     List<ItemRequest> findByOwner_IdNot(final int userId, final Pageable pageable);
 }

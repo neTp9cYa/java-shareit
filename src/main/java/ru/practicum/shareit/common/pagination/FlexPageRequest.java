@@ -1,7 +1,6 @@
 package ru.practicum.shareit.common.pagination;
 
 import javax.validation.ValidationException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 public class FlexPageRequest extends FlexPageable {
