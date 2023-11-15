@@ -8,6 +8,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -28,6 +29,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository itemRepository;
 
     @Override
+    @Transactional
     public ItemRequestViewDto create(final int userId, final ItemRequestCreateDto itemRequestCreateDto) {
 
         final User user = userRepository.findById(userId)
@@ -40,6 +42,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestViewDto> findOwn(final int userId) {
 
         final User user = userRepository.findById(userId)
@@ -55,6 +58,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestViewDto> findSomeoneElses(final int userId, final Pageable pageable) {
 
         final User user = userRepository.findById(userId)
@@ -69,6 +73,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemRequestViewDto findById(int userId, int requestId) {
 
         final User user = userRepository.findById(userId)
