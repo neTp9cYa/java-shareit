@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
@@ -101,24 +102,26 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingViewDto> findOwn(final int userId, final BookingState bookingStatusDto) {
+    public List<BookingViewDto> findOwn(final int userId,
+                                        final BookingState bookingStatusDto,
+                                        final Pageable pageable) {
         userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         List<Booking> bookings = null;
 
         if (bookingStatusDto == BookingState.ALL) {
-            bookings = bookingRepository.findOwn(userId);
+            bookings = bookingRepository.findOwn(userId, pageable);
         } else if (bookingStatusDto == BookingState.WAITING) {
-            bookings = bookingRepository.findOwn(userId, BookingStatus.WAITING);
+            bookings = bookingRepository.findOwn(userId, BookingStatus.WAITING, pageable);
         } else if (bookingStatusDto == BookingState.REJECTED) {
-            bookings = bookingRepository.findOwn(userId, BookingStatus.REJECTED);
+            bookings = bookingRepository.findOwn(userId, BookingStatus.REJECTED, pageable);
         } else if (bookingStatusDto == BookingState.PAST) {
-            bookings = bookingRepository.findOwnInPast(userId, LocalDateTime.now());
+            bookings = bookingRepository.findOwnInPast(userId, LocalDateTime.now(), pageable);
         } else if (bookingStatusDto == BookingState.CURRENT) {
-            bookings = bookingRepository.findOwnCurrent(userId, LocalDateTime.now());
+            bookings = bookingRepository.findOwnCurrent(userId, LocalDateTime.now(), pageable);
         } else if (bookingStatusDto == BookingState.FUTURE) {
-            bookings = bookingRepository.findOwnInFuture(userId, LocalDateTime.now());
+            bookings = bookingRepository.findOwnInFuture(userId, LocalDateTime.now(), pageable);
         } else {
             throw new RuntimeException("Not supported");
         }
@@ -128,24 +131,26 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingViewDto> findByItemOwner(final int userId, final BookingState bookingStatusDto) {
+    public List<BookingViewDto> findByItemOwner(final int userId,
+                                                final BookingState bookingStatusDto,
+                                                final Pageable pageable) {
         userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         List<Booking> bookings = null;
 
         if (bookingStatusDto == BookingState.ALL) {
-            bookings = bookingRepository.findByItemOwner(userId);
+            bookings = bookingRepository.findByItemOwner(userId, pageable);
         } else if (bookingStatusDto == BookingState.WAITING) {
-            bookings = bookingRepository.findByItemOwner(userId, BookingStatus.WAITING);
+            bookings = bookingRepository.findByItemOwner(userId, BookingStatus.WAITING, pageable);
         } else if (bookingStatusDto == BookingState.REJECTED) {
-            bookings = bookingRepository.findByItemOwner(userId, BookingStatus.REJECTED);
+            bookings = bookingRepository.findByItemOwner(userId, BookingStatus.REJECTED, pageable);
         } else if (bookingStatusDto == BookingState.PAST) {
-            bookings = bookingRepository.findByItemOwnerInPast(userId, LocalDateTime.now());
+            bookings = bookingRepository.findByItemOwnerInPast(userId, LocalDateTime.now(), pageable);
         } else if (bookingStatusDto == BookingState.CURRENT) {
-            bookings = bookingRepository.findByItemOwnerCurrent(userId, LocalDateTime.now());
+            bookings = bookingRepository.findByItemOwnerCurrent(userId, LocalDateTime.now(), pageable);
         } else if (bookingStatusDto == BookingState.FUTURE) {
-            bookings = bookingRepository.findByItemOwnerInFuture(userId, LocalDateTime.now());
+            bookings = bookingRepository.findByItemOwnerInFuture(userId, LocalDateTime.now(), pageable);
         } else {
             throw new RuntimeException("Not supported");
         }

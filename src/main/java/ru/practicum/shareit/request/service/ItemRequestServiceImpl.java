@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.common.exception.NotFoundException;
+import ru.practicum.shareit.common.pagination.FlexPageable;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
@@ -55,12 +57,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestViewDto> findSomeoneElses(final int userId) {
+    public List<ItemRequestViewDto> findSomeoneElses(final int userId, final Pageable pageable) {
 
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
-        final List<ItemRequest> itemRequests = itemRequestRepository.findByOwner_IdNot(userId);
+        final List<ItemRequest> itemRequests = itemRequestRepository.findByOwner_IdNot(userId, pageable);
         final List<Item> items = itemRepository.findByRequest_Owner_IdNot(userId);
 
         return itemRequestMapper.toItemRequestSummaryViewDtoList(

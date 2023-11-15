@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -43,10 +44,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemViewDto> findByUserId(final Integer userId) {
+    public List<ItemViewDto> findByUserId(final Integer userId, final Pageable pageable) {
         final List<Item> items = itemRepository.findByOwner_Id(userId);
 
-        final List<Booking> bookings = bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED);
+        final List<Booking> bookings =
+            bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED, pageable);
         final Pair<Map<Integer, Booking>, Map<Integer, Booking>> nearestBookings = getNearestBookings(bookings);
         final Map<Integer, Booking> lastBookings = nearestBookings.getFirst();
         final Map<Integer, Booking> nextBookings = nearestBookings.getSecond();
@@ -93,7 +95,11 @@ public class ItemServiceImpl implements ItemService {
         final Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundException(String.format("Item with id %d not found", itemId)));
 
-        final List<Booking> bookings = bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED);
+        final List<Booking> bookings = bookingRepository.findByItem_Owner_IdAndStatus(
+            userId,
+            BookingStatus.APPROVED,
+            Pageable.unpaged());
+
         final Pair<Map<Integer, Booking>, Map<Integer, Booking>> nearestBookings = getNearestBookings(bookings);
         final Map<Integer, Booking> lastBookings = nearestBookings.getFirst();
         final Map<Integer, Booking> nextBookings = nearestBookings.getSecond();
@@ -113,11 +119,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> search(final String text) {
+    public List<ItemDto> search(final String text, final Pageable pageable) {
         if (text == null || text.isEmpty()) {
             return Collections.<ItemDto>emptyList();
         }
-        final List<Item> items = itemRepository.search(text);
+        final List<Item> items = itemRepository.search(text, pageable);
         return itemMapper.toItemDtoList(items);
     }
 
@@ -132,7 +138,8 @@ public class ItemServiceImpl implements ItemService {
 
         if (itemDto.getRequestId() != null) {
             final ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
-                .orElseThrow(() -> new NotFoundException(String.format("Item request with id %d not found", itemDto.getRequestId())));
+                .orElseThrow(() -> new NotFoundException(
+                    String.format("Item request with id %d not found", itemDto.getRequestId())));
             item.setRequest(itemRequest);
         }
 

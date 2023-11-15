@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import java.util.List;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,7 @@ import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
+import ru.practicum.shareit.common.pagination.FlexPageRequest;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -50,15 +52,23 @@ public class BookingController {
 
     @GetMapping()
     @LogInputOutputAnnotaion
-    public List<BookingViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                        @RequestParam(defaultValue = "ALL") final BookingState state) {
-        return bookingService.findOwn(userId, state);
+    public List<BookingViewDto> findOwn(
+        @RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+        @RequestParam(defaultValue = "ALL") final BookingState state,
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+
+        return bookingService.findOwn(userId, state, FlexPageRequest.of(from, size));
     }
 
     @GetMapping("owner")
     @LogInputOutputAnnotaion
-    public List<BookingViewDto> findByItemOwner(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                                @RequestParam(defaultValue = "ALL") final BookingState state) {
-        return bookingService.findByItemOwner(userId, state);
+    public List<BookingViewDto> findByItemOwner(
+        @RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+        @RequestParam(defaultValue = "ALL") final BookingState state,
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+
+        return bookingService.findByItemOwner(userId, state, FlexPageRequest.of(from, size));
     }
 }

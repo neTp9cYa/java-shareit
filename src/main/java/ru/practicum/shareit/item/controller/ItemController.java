@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
+import ru.practicum.shareit.common.pagination.FlexPageRequest;
 import ru.practicum.shareit.item.dto.CommentCreateDto;
 import ru.practicum.shareit.item.dto.CommentViewDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -34,8 +36,10 @@ public class ItemController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId) {
-        return itemService.findByUserId(userId);
+    public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+                                     @RequestParam(defaultValue = "0") @Min(0) final int from,
+                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+        return itemService.findByUserId(userId, FlexPageRequest.of(from, size));
     }
 
     @GetMapping("/{itemId}")
@@ -47,8 +51,10 @@ public class ItemController {
 
     @GetMapping("/search")
     @LogInputOutputAnnotaion
-    public List<ItemDto> search(@RequestParam final String text) {
-        return itemService.search(text);
+    public List<ItemDto> search(@RequestParam final String text,
+                                @RequestParam(defaultValue = "0") @Min(0) final int from,
+                                @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+        return itemService.search(text, FlexPageRequest.of(from, size));
     }
 
     @PostMapping
