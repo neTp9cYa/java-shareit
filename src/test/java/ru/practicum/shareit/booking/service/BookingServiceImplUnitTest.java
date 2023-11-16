@@ -10,12 +10,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.common.exception.ValidationException;
+import ru.practicum.shareit.common.pagination.FlexPageRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -28,7 +31,7 @@ class BookingServiceImplUnitTest {
     private BookingRepository bookingRepository;
 
     @Mock
-    private BookingMapper bookingMapper;
+    private BookingMapperImpl bookingMapper;
 
     @Mock
     private UserRepository userRepository;
@@ -152,6 +155,120 @@ class BookingServiceImplUnitTest {
         Mockito.verifyNoMoreInteractions(userRepository, itemRepository, bookingRepository);
     }
 
+    @Test
+    void whenApproveNotInWaitingStatusThenThrow() {
+        final User user = getValidUser();
+        final Booking booking = getValidBooking();
+        booking.setStatus(BookingStatus.APPROVED);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        Mockito
+            .when(bookingRepository.findById(booking.getId()))
+            .thenReturn(Optional.of(booking));
+
+        final ValidationException exception = Assertions.assertThrows(
+            ValidationException.class,
+            () -> bookingService.approveOrReject(user.getId(), booking.getId(), true));
+
+        Assertions.assertEquals(
+            String.format("Status in final state"),
+            exception.getMessage());
+    }
+
+    @Test
+    void whenApproveInWaitingStatusThenSuccess() {
+        final User user = getValidUser();
+        final Booking booking = getValidBooking();
+        booking.setStatus(BookingStatus.WAITING);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        Mockito
+            .when(bookingRepository.findById(booking.getId()))
+            .thenReturn(Optional.of(booking));
+
+        bookingService.approveOrReject(user.getId(), booking.getId(), true);
+
+        Mockito.verify(userRepository, Mockito.times(1))
+            .findById(user.getId());
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findById(booking.getId());
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .save(booking);
+
+        Mockito.verifyNoMoreInteractions(userRepository, itemRepository, bookingRepository);
+    }
+
+    @Test
+    void whenFindByIdSomeoneElsesBookingThenThrow() {
+        final User user = getValidUser();
+        user.setId(1);
+
+        final Booking booking = getValidBooking();
+        booking.getBooker().setId(2);
+        booking.getItem().getOwner().setId(3);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        Mockito
+            .when(bookingRepository.findById(booking.getId()))
+            .thenReturn(Optional.of(booking));
+
+        final NotFoundException exception = Assertions.assertThrows(
+            NotFoundException.class,
+            () -> bookingService.findById(user.getId(), booking.getId()));
+
+        Assertions.assertEquals(
+            String.format("Booking with id %d not found", booking.getId()),
+            exception.getMessage());
+    }
+
+    @Test
+    void whenFindByIdOwnBookingThenSuccess() {
+        final User user = getValidUser();
+        user.setId(1);
+
+        final Booking booking = getValidBooking();
+        booking.setBooker(user);
+        booking.getItem().getOwner().setId(3);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        Mockito
+            .when(bookingRepository.findById(booking.getId()))
+            .thenReturn(Optional.of(booking));
+
+        bookingService.findById(user.getId(), booking.getId());
+    }
+
+    @Test
+    void whenFindOwnThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findOwn(user.getId(), BookingState.ALL, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findOwn(user.getId(), pageable);
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
     private BookingCreateDto getValidBookingCreateDto() {
         return BookingCreateDto.builder()
             .itemId(1)
@@ -182,8 +299,8 @@ class BookingServiceImplUnitTest {
     private Booking getValidBooking() {
         return Booking.builder()
             .id(1)
-            .item(null)
-            .booker(null)
+            .item(getValidItem())
+            .booker(getValidUser())
             .start(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
             .end(LocalDateTime.now().plus(2, ChronoUnit.DAYS))
             .status(BookingStatus.APPROVED)

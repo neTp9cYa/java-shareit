@@ -26,6 +26,8 @@ import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.common.exception.ExceptionHelper;
+import ru.practicum.shareit.item.dto.ItemViewDto;
+import ru.practicum.shareit.user.dto.UserViewDto;
 
 @WebMvcTest(controllers = {BookingController.class, ExceptionHelper.class})
 class BookingControllerTest {
@@ -37,8 +39,8 @@ class BookingControllerTest {
         .build();
     private final BookingViewDto bookingViewDto1 = BookingViewDto.builder()
         .id(1)
-        .item(null)
-        .booker(null)
+        .item(ItemViewDto.builder().build())
+        .booker(UserViewDto.builder().build())
         .start(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
         .end(LocalDateTime.now().plus(2, ChronoUnit.DAYS))
         .status(BookingStatus.WAITING)
