@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.common.pagination.FlexPageRequest;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemViewDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -33,13 +33,13 @@ class ItemServiceImplIntegrationTest {
         userRepository.save(user1);
         userRepository.save(user2);
 
-        final ItemDto itemDto1 = getItemDto1();
-        final ItemDto itemDto2 = getItemDto2();
-        final ItemDto itemDto3 = getItemDto3();
+        final ItemCreateDto itemCreateDto1 = getItemCreateDto1();
+        final ItemCreateDto itemCreateDto2 = getItemCreateDto2();
+        final ItemCreateDto itemCreateDto3 = getItemCreateDto3();
 
-        itemService.create(user1.getId(), itemDto1);
-        itemService.create(user2.getId(), itemDto2);
-        itemService.create(user2.getId(), itemDto3);
+        itemService.create(user1.getId(), itemCreateDto1);
+        itemService.create(user2.getId(), itemCreateDto2);
+        itemService.create(user2.getId(), itemCreateDto3);
 
         final List<ItemViewDto> itemsOfUser1 = itemService.findByUserId(
             user1.getId(),
@@ -50,18 +50,18 @@ class ItemServiceImplIntegrationTest {
 
         assertThat(itemsOfUser1, notNullValue());
         assertThat(itemsOfUser1.size(), equalTo(1));
-        assertThat(itemsOfUser1.get(0).getName(), equalTo(itemDto1.getName()));
-        assertThat(itemsOfUser1.get(0).getDescription(), equalTo(itemDto1.getDescription()));
-        assertThat(itemsOfUser1.get(0).getAvailable(), equalTo(itemDto1.getAvailable()));
+        assertThat(itemsOfUser1.get(0).getName(), equalTo(itemCreateDto1.getName()));
+        assertThat(itemsOfUser1.get(0).getDescription(), equalTo(itemCreateDto1.getDescription()));
+        assertThat(itemsOfUser1.get(0).getAvailable(), equalTo(itemCreateDto1.getAvailable()));
 
         assertThat(itemsOfUser2, notNullValue());
         assertThat(itemsOfUser2.size(), equalTo(2));
-        assertThat(itemsOfUser2.get(0).getName(), equalTo(itemDto2.getName()));
-        assertThat(itemsOfUser2.get(0).getDescription(), equalTo(itemDto2.getDescription()));
-        assertThat(itemsOfUser2.get(0).getAvailable(), equalTo(itemDto2.getAvailable()));
-        assertThat(itemsOfUser2.get(1).getName(), equalTo(itemDto3.getName()));
-        assertThat(itemsOfUser2.get(1).getDescription(), equalTo(itemDto3.getDescription()));
-        assertThat(itemsOfUser2.get(1).getAvailable(), equalTo(itemDto3.getAvailable()));
+        assertThat(itemsOfUser2.get(0).getName(), equalTo(itemCreateDto2.getName()));
+        assertThat(itemsOfUser2.get(0).getDescription(), equalTo(itemCreateDto2.getDescription()));
+        assertThat(itemsOfUser2.get(0).getAvailable(), equalTo(itemCreateDto2.getAvailable()));
+        assertThat(itemsOfUser2.get(1).getName(), equalTo(itemCreateDto3.getName()));
+        assertThat(itemsOfUser2.get(1).getDescription(), equalTo(itemCreateDto3.getDescription()));
+        assertThat(itemsOfUser2.get(1).getAvailable(), equalTo(itemCreateDto3.getAvailable()));
     }
 
     private User getValidUser1() {
@@ -80,9 +80,8 @@ class ItemServiceImplIntegrationTest {
             .build();
     }
 
-    private ItemDto getItemDto1() {
-        return ItemDto.builder()
-            .id(null)
+    private ItemCreateDto getItemCreateDto1() {
+        return ItemCreateDto.builder()
             .name("name_1")
             .description("description_1")
             .available(true)
@@ -90,9 +89,8 @@ class ItemServiceImplIntegrationTest {
             .build();
     }
 
-    private ItemDto getItemDto2() {
-        return ItemDto.builder()
-            .id(null)
+    private ItemCreateDto getItemCreateDto2() {
+        return ItemCreateDto.builder()
             .name("name_1")
             .description("description_1")
             .available(false)
@@ -100,9 +98,8 @@ class ItemServiceImplIntegrationTest {
             .build();
     }
 
-    private ItemDto getItemDto3() {
-        return ItemDto.builder()
-            .id(null)
+    private ItemCreateDto getItemCreateDto3() {
+        return ItemCreateDto.builder()
             .name("name_1")
             .description("description_1")
             .available(true)

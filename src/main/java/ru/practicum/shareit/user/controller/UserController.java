@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserDtoCreate;
-import ru.practicum.shareit.user.dto.UserDtoUpdate;
-import ru.practicum.shareit.user.service.UserMapper;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.dto.UserViewDto;
 import ru.practicum.shareit.user.service.UserService;
 
 @RestController
@@ -26,32 +25,30 @@ import ru.practicum.shareit.user.service.UserService;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<UserDto> findAll() {
+    public List<UserViewDto> findAll() {
         return userService.findAll();
     }
 
     @GetMapping("/{userId}")
     @LogInputOutputAnnotaion
-    public UserDto findById(@PathVariable final Integer userId) {
+    public UserViewDto findById(@PathVariable final Integer userId) {
         return userService.findById(userId);
     }
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public UserDto create(@RequestBody @Validated(UserDtoCreate.class) final UserDto userDto) {
-        return userService.create(userDto);
+    public UserViewDto create(@RequestBody @Validated final UserCreateDto userCreateDto) {
+        return userService.create(userCreateDto);
     }
 
     @PatchMapping("/{userId}")
     @LogInputOutputAnnotaion
-    public UserDto update(@PathVariable @NotNull final Integer userId,
-                          @RequestBody @Validated(UserDtoUpdate.class) final UserDto userDto) {
-        userDto.setId(userId);
-        return userService.update(userDto);
+    public UserViewDto update(@PathVariable @NotNull final Integer userId,
+                              @RequestBody @Validated final UserUpdateDto userUpdateDto) {
+        return userService.update(userId, userUpdateDto);
     }
 
     @DeleteMapping("/{userId}")

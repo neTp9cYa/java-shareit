@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.item.dto.ItemViewDto;
+import ru.practicum.shareit.user.dto.UserViewDto;
 
 @Getter
 @Setter
@@ -17,9 +17,9 @@ public class BookingViewDto {
 
     private Integer id;
 
-    private ItemDto item;
+    private ItemViewDto item;
 
-    private UserDto booker;
+    private UserViewDto booker;
 
     private LocalDateTime start;
 

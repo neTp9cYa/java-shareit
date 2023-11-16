@@ -35,7 +35,7 @@ public class ItemRequestMapperImpl implements ItemRequestMapper {
             .id(itemRequest.getId())
             .description(itemRequest.getDescription())
             .created(itemRequest.getCreated())
-            .items(items != null ? itemMapper.toItemDtoList(items) : Collections.EMPTY_LIST)
+            .items(items != null ? itemMapper.toItemViewDtoList(items) : Collections.EMPTY_LIST)
             .build();
     }
 

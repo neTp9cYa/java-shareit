@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Singular;
 import lombok.ToString;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemViewDto;
 
 @Getter
 @Setter
@@ -23,5 +23,5 @@ public class ItemRequestViewDto {
     private LocalDateTime created;
 
     @Singular
-    private List<ItemDto> items;
+    private List<ItemViewDto> items;
 }

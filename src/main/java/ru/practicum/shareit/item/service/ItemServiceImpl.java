@@ -19,7 +19,8 @@ import ru.practicum.shareit.common.exception.NotFoundException;
 import ru.practicum.shareit.common.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentCreateDto;
 import ru.practicum.shareit.item.dto.CommentViewDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.dto.ItemViewDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -119,56 +120,56 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> search(final String text, final Pageable pageable) {
+    public List<ItemViewDto> search(final String text, final Pageable pageable) {
         if (text == null || text.isEmpty()) {
-            return Collections.<ItemDto>emptyList();
+            return Collections.<ItemViewDto>emptyList();
         }
         final List<Item> items = itemRepository.search(text, pageable);
-        return itemMapper.toItemDtoList(items);
+        return itemMapper.toItemViewDtoList(items);
     }
 
     @Override
     @Transactional
-    public ItemDto create(final Integer userId, final ItemDto itemDto) {
+    public ItemViewDto create(final Integer userId, final ItemCreateDto itemCreateDto) {
 
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
-        final Item item = itemMapper.toItem(itemDto, user);
+        final Item item = itemMapper.toItem(itemCreateDto, user);
 
-        if (itemDto.getRequestId() != null) {
-            final ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+        if (itemCreateDto.getRequestId() != null) {
+            final ItemRequest itemRequest = itemRequestRepository.findById(itemCreateDto.getRequestId())
                 .orElseThrow(() -> new NotFoundException(
-                    String.format("Item request with id %d not found", itemDto.getRequestId())));
+                    String.format("Item request with id %d not found", itemCreateDto.getRequestId())));
             item.setRequest(itemRequest);
         }
 
         final Item storedItem = itemRepository.save(item);
-        return itemMapper.toItemDto(storedItem);
+        return itemMapper.toItemViewDto(storedItem, null, null);
     }
 
     @Override
     @Transactional
-    public ItemDto update(final Integer userId, final ItemDto itemDto) {
+    public ItemViewDto update(final Integer userId, final int itemId, final ItemUpdateDto itemUpdateDto) {
 
         // check if user exists
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
         // check if item exists
-        final Item storedItem = itemRepository.findById(itemDto.getId())
+        final Item storedItem = itemRepository.findById(itemId)
             .orElseThrow(() -> {
                 throw new NotFoundException(
-                    String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
+                    String.format("Item with id %d not found for user with id %d", itemId, userId));
             });
 
         // check if user is owner of item
         if (storedItem.getOwner().getId() != userId.intValue()) {
             throw new NotFoundException(
-                String.format("Item with id %d not found for user with id %d", itemDto.getId(), userId));
+                String.format("Item with id %d not found for user with id %d", itemId, userId));
         }
 
-        final Item item = itemMapper.toItem(itemDto, null);
+        final Item item = itemMapper.toItem(itemUpdateDto, null);
 
         // update passed fields to new values
         if (item.getName() != null) {
@@ -182,7 +183,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         itemRepository.save(storedItem);
-        return itemMapper.toItemDto(storedItem);
+        return itemMapper.toItemViewDto(storedItem, null, null);
     }
 
     @Override
