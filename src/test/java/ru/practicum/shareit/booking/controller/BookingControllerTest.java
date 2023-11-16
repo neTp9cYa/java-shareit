@@ -66,6 +66,23 @@ class BookingControllerTest {
     }
 
     @Test
+    void whenEndBeforeStartThenCreateReturn400() throws Exception {
+        mvc.perform(post("/bookings")
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("X-Sharer-User-Id", 1)
+                .content(mapper.writeValueAsString(
+                    BookingCreateDto.builder()
+                        .itemId(1)
+                        .start(LocalDateTime.now().plus(2, ChronoUnit.DAYS))
+                        .end(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
+                        .build()
+                )))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void whenRequestCorrectThenApproveOrRejectReturnSucess() throws Exception {
         when(bookingService.approveOrReject(anyInt(), anyInt(), anyBoolean()))
             .thenReturn(bookingViewDto1);
