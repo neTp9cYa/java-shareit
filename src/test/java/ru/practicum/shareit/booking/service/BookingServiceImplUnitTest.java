@@ -6,9 +6,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
@@ -21,8 +23,11 @@ import ru.practicum.shareit.common.exception.ValidationException;
 import ru.practicum.shareit.common.pagination.FlexPageRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.service.CommentMapperImpl;
+import ru.practicum.shareit.item.service.ItemMapperImpl;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserMapperImpl;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplUnitTest {
@@ -30,8 +35,9 @@ class BookingServiceImplUnitTest {
     @Mock
     private BookingRepository bookingRepository;
 
-    @Mock
-    private BookingMapperImpl bookingMapper;
+    @Spy
+    private BookingMapperImpl bookingMapper = new BookingMapperImpl(
+        new ItemMapperImpl(new CommentMapperImpl()), new UserMapperImpl());
 
     @Mock
     private UserRepository userRepository;
@@ -132,6 +138,7 @@ class BookingServiceImplUnitTest {
         final User user = getValidUser();
         final Item item = getValidItem();
         item.getOwner().setId(user.getId() + 1);
+        final Booking booking = getValidBooking();
 
         Mockito
             .when(userRepository.findById(user.getId()))
@@ -140,6 +147,10 @@ class BookingServiceImplUnitTest {
         Mockito
             .when(itemRepository.findById(item.getId()))
             .thenReturn(Optional.of(item));
+
+        Mockito
+            .when(bookingRepository.save(any()))
+            .thenReturn(booking);
 
         bookingService.create(user.getId(), bookingCreateDto);
 
@@ -150,7 +161,7 @@ class BookingServiceImplUnitTest {
             .findById(item.getId());
 
         Mockito.verify(bookingRepository, Mockito.times(1))
-            .save(Mockito.any());
+            .save(any());
 
         Mockito.verifyNoMoreInteractions(userRepository, itemRepository, bookingRepository);
     }
