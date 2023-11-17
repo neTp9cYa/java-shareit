@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
@@ -21,6 +22,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;

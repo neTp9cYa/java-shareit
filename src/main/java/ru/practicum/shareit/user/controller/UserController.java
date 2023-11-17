@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
 import java.util.List;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +22,7 @@ import ru.practicum.shareit.user.service.UserService;
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
-@Slf4j
+@Validated
 public class UserController {
     private final UserService userService;
 
@@ -34,20 +34,20 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @LogInputOutputAnnotaion
-    public UserViewDto findById(@PathVariable final Integer userId) {
+    public UserViewDto findById(@PathVariable final int userId) {
         return userService.findById(userId);
     }
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public UserViewDto create(@RequestBody @Validated final UserCreateDto userCreateDto) {
+    public UserViewDto create(@RequestBody @Valid final UserCreateDto userCreateDto) {
         return userService.create(userCreateDto);
     }
 
     @PatchMapping("/{userId}")
     @LogInputOutputAnnotaion
     public UserViewDto update(@PathVariable final int userId,
-                              @RequestBody @Validated final UserUpdateDto userUpdateDto) {
+                              @RequestBody @Valid final UserUpdateDto userUpdateDto) {
         return userService.update(userId, userUpdateDto);
     }
 

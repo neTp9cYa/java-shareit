@@ -27,6 +27,7 @@ import ru.practicum.shareit.item.service.ItemService;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Validated
 public class ItemController {
 
     private final ItemService itemService;
@@ -34,45 +35,45 @@ public class ItemController {
     @GetMapping
     @LogInputOutputAnnotaion
     public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                     @RequestParam(defaultValue = "0") @Min(0) final int from,
-                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+                                     @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
+                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
         return itemService.findByUserId(userId, FlexPageRequest.of(from, size));
     }
 
     @GetMapping("/{itemId}")
     @LogInputOutputAnnotaion
     public ItemViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                @PathVariable @NotNull final Integer itemId) {
+                                @PathVariable final int itemId) {
         return itemService.findById(userId, itemId);
     }
 
     @GetMapping("/search")
     @LogInputOutputAnnotaion
     public List<ItemViewDto> search(@RequestParam final String text,
-                                    @RequestParam(defaultValue = "0") @Min(0) final int from,
-                                    @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+                                    @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
+                                    @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
         return itemService.search(text, FlexPageRequest.of(from, size));
     }
 
     @PostMapping
     @LogInputOutputAnnotaion
     public ItemViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
-                              @RequestBody @Validated final ItemCreateDto itemCreateDto) {
+                              @RequestBody @Valid final ItemCreateDto itemCreateDto) {
         return itemService.create(userId, itemCreateDto);
     }
 
     @PatchMapping("/{itemId}")
     @LogInputOutputAnnotaion
     public ItemViewDto update(@RequestHeader("X-Sharer-User-Id") final int userId,
-                              @PathVariable @NotNull final Integer itemId,
-                              @RequestBody @Validated final ItemUpdateDto itemUpdateDto) {
+                              @PathVariable final int itemId,
+                              @RequestBody @Valid final ItemUpdateDto itemUpdateDto) {
         return itemService.update(userId, itemId, itemUpdateDto);
     }
 
     @PostMapping("{itemId}/comment")
     @LogInputOutputAnnotaion
     public CommentViewDto addComment(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                     @PathVariable @NotNull final Integer itemId,
+                                     @PathVariable final int itemId,
                                      @RequestBody @Valid final CommentCreateDto commentCreateDto) {
         return itemService.addComment(userId, itemId, commentCreateDto);
     }

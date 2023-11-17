@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import ru.practicum.shareit.common.pagination.FlexPageRequest;
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
 
     private final BookingService bookingService;
@@ -31,22 +33,22 @@ public class BookingController {
     @PostMapping
     @LogInputOutputAnnotaion
     public BookingViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                 @RequestBody @Validated final BookingCreateDto bookingCreateDto) {
+                                 @RequestBody @Valid final BookingCreateDto bookingCreateDto) {
         return bookingService.create(userId, bookingCreateDto);
     }
 
     @PatchMapping("{bookingId}")
     @LogInputOutputAnnotaion
     public BookingViewDto approveOrReject(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                          @PathVariable @NotNull final Integer bookingId,
-                                          @RequestParam @NotNull final Boolean approved) {
+                                          @PathVariable final int bookingId,
+                                          @RequestParam final boolean approved) {
         return bookingService.approveOrReject(userId, bookingId, approved);
     }
 
     @GetMapping("{bookingId}")
     @LogInputOutputAnnotaion
     public BookingViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                   @PathVariable @NotNull final Integer bookingId) {
+                                   @PathVariable final int bookingId) {
         return bookingService.findById(userId, bookingId);
     }
 
@@ -55,8 +57,8 @@ public class BookingController {
     public List<BookingViewDto> findOwn(
         @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "ALL") final BookingState state,
-        @RequestParam(defaultValue = "0") @Min(0) final int from,
-        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+        @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
 
         return bookingService.findOwn(userId, state, FlexPageRequest.of(from, size));
     }
@@ -66,8 +68,8 @@ public class BookingController {
     public List<BookingViewDto> findByItemOwner(
         @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "ALL") final BookingState state,
-        @RequestParam(defaultValue = "0") @Min(0) final int from,
-        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
+        @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
 
         return bookingService.findByItemOwner(userId, state, FlexPageRequest.of(from, size));
     }
