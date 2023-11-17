@@ -44,8 +44,8 @@ public class ItemRequestController {
     @LogInputOutputAnnotaion
     public List<ItemRequestViewDto> findAll(
         @RequestHeader("X-Sharer-User-Id") final int userId,
-        @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
-        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final int size) {
 
         return itemRequestService.findSomeoneElses(userId, FlexPageRequest.of(from, size));
     }

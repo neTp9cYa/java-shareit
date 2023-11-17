@@ -56,8 +56,8 @@ public class BookingController {
     public List<BookingViewDto> findOwn(
         @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "ALL") final BookingState state,
-        @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
-        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final int size) {
 
         return bookingService.findOwn(userId, state, FlexPageRequest.of(from, size));
     }
@@ -67,8 +67,8 @@ public class BookingController {
     public List<BookingViewDto> findByItemOwner(
         @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "ALL") final BookingState state,
-        @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
-        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final int size) {
 
         return bookingService.findByItemOwner(userId, state, FlexPageRequest.of(from, size));
     }
