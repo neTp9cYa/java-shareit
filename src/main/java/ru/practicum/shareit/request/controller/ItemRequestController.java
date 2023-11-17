@@ -42,7 +42,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("all")
-    //@LogInputOutputAnnotaion
+    @LogInputOutputAnnotaion
     public List<ItemRequestViewDto> findAll(
         @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
