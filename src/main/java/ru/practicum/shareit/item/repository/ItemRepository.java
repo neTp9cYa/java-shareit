@@ -9,9 +9,9 @@ import ru.practicum.shareit.item.model.Item;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-    List<Item> findByOwner_Id(final Integer userId);
+    List<Item> findByOwner_Id(final int userId);
 
-    List<Item> findByRequest_Id(final Integer requestId);
+    List<Item> findByRequest_Id(final int requestId);
 
     @Query("select item " +
         "from Item as item " +

@@ -9,9 +9,9 @@ import ru.practicum.shareit.booking.dto.BookingViewDto;
 public interface BookingService {
     BookingViewDto create(final int userId, final BookingCreateDto bookingCreateDto);
 
-    BookingViewDto approveOrReject(final int userId, final Integer bookingId, final Boolean approved);
+    BookingViewDto approveOrReject(final int userId, final int bookingId, final Boolean approved);
 
-    BookingViewDto findById(final int userId, final Integer bookingId);
+    BookingViewDto findById(final int userId, final int bookingId);
 
     List<BookingViewDto> findOwn(final int userId, final BookingState bookingState, final Pageable pageable);
 

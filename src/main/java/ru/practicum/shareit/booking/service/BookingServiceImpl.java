@@ -60,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingViewDto approveOrReject(final int userId, final Integer bookingId, final Boolean approved) {
+    public BookingViewDto approveOrReject(final int userId, final int bookingId, final Boolean approved) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
@@ -85,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookingViewDto findById(final int userId, final Integer bookingId) {
+    public BookingViewDto findById(final int userId, final int bookingId) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 

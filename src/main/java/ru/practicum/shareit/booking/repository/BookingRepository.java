@@ -19,49 +19,49 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Optional<Booking> findById(Integer id);
 
     @EntityGraph(attributePaths = {"item"})
-    public List<Booking> findByItem_Owner_IdAndStatus(final Integer userId,
+    public List<Booking> findByItem_Owner_IdAndStatus(final int userId,
                                                       final BookingStatus status,
                                                       final Pageable pageable);
 
     @Query("select count(booking.id) " +
         "from Booking as booking " +
         "where booking.booker.id = :userId and booking.item.id = :itemId and booking.start < :now")
-    int usedCount(final Integer userId, final Integer itemId, final LocalDateTime now);
+    int usedCount(final int userId, final int itemId, final LocalDateTime now);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.booker.id = :userId " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findOwn(final Integer userId, final Pageable pageable);
+    List<Booking> findOwn(final int userId, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.booker.id = :userId and booking.status = :status " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findOwn(final Integer userId, final BookingStatus status, final Pageable pageable);
+    List<Booking> findOwn(final int userId, final BookingStatus status, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.booker.id = :userId and booking.end < :now " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findOwnInPast(final Integer userId, final LocalDateTime now, final Pageable pageable);
+    List<Booking> findOwnInPast(final int userId, final LocalDateTime now, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.booker.id = :userId and booking.start <= :now and booking.end >= :now " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findOwnCurrent(final Integer userId, final LocalDateTime now, final Pageable pageable);
+    List<Booking> findOwnCurrent(final int userId, final LocalDateTime now, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.booker.id = :userId and booking.start > :now " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findOwnInFuture(final Integer userId, final LocalDateTime now, final Pageable pageable);
+    List<Booking> findOwnInFuture(final int userId, final LocalDateTime now, final Pageable pageable);
 
 
     @Query("select booking " +
@@ -69,41 +69,41 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
         "where booking.item.owner.id = :userId " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findByItemOwner(final Integer userId, final Pageable pageable);
+    List<Booking> findByItemOwner(final int userId, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.item.owner.id = :userId and booking.status = :status " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findByItemOwner(final Integer userId, BookingStatus status, final Pageable pageable);
+    List<Booking> findByItemOwner(final int userId, BookingStatus status, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.item.owner.id = :userId and booking.end < :now " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findByItemOwnerInPast(final Integer userId, final LocalDateTime now, final Pageable pageable);
+    List<Booking> findByItemOwnerInPast(final int userId, final LocalDateTime now, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.item.owner.id = :userId and booking.start <= :now and booking.end >= :now " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findByItemOwnerCurrent(final Integer userId, final LocalDateTime now, final Pageable pageable);
+    List<Booking> findByItemOwnerCurrent(final int userId, final LocalDateTime now, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.item.owner.id = :userId and booking.start > :now " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findByItemOwnerInFuture(final Integer userId, final LocalDateTime now, final Pageable pageable);
+    List<Booking> findByItemOwnerInFuture(final int userId, final LocalDateTime now, final Pageable pageable);
 
     @Query("select booking " +
         "from Booking as booking " +
         "where booking.item.id = :itemId " +
         "order by booking.start desc")
     @EntityGraph(attributePaths = {"item", "booker"})
-    List<Booking> findByItem(final Integer itemId);
+    List<Booking> findByItem(final int itemId);
 
 }

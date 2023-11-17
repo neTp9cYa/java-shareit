@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemViewDto> findByUserId(final Integer userId, final Pageable pageable) {
+    public List<ItemViewDto> findByUserId(final int userId, final Pageable pageable) {
         final List<Item> items = itemRepository.findByOwner_Id(userId);
 
         final List<Booking> bookings =
@@ -92,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public ItemViewDto findById(final Integer userId, final Integer itemId) {
+    public ItemViewDto findById(final int userId, final int itemId) {
         final Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new NotFoundException(String.format("Item with id %d not found", itemId)));
 
@@ -130,7 +130,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemViewDto create(final Integer userId, final ItemCreateDto itemCreateDto) {
+    public ItemViewDto create(final int userId, final ItemCreateDto itemCreateDto) {
 
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -150,7 +150,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemViewDto update(final Integer userId, final int itemId, final ItemUpdateDto itemUpdateDto) {
+    public ItemViewDto update(final int userId, final int itemId, final ItemUpdateDto itemUpdateDto) {
 
         // check if user exists
         final User user = userRepository.findById(userId)
@@ -164,7 +164,7 @@ public class ItemServiceImpl implements ItemService {
             });
 
         // check if user is owner of item
-        if (storedItem.getOwner().getId() != userId.intValue()) {
+        if (storedItem.getOwner().getId() != userId) {
             throw new NotFoundException(
                 String.format("Item with id %d not found for user with id %d", itemId, userId));
         }
@@ -188,7 +188,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public CommentViewDto addComment(final Integer userId, final Integer itemId,
+    public CommentViewDto addComment(final int userId, final int itemId,
                                      final CommentCreateDto commentCreateDto) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));

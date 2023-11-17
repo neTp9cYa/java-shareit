@@ -10,15 +10,15 @@ import ru.practicum.shareit.item.dto.ItemViewDto;
 
 public interface ItemService {
 
-    List<ItemViewDto> findByUserId(final Integer userId, final Pageable pageable);
+    List<ItemViewDto> findByUserId(final int userId, final Pageable pageable);
 
-    ItemViewDto findById(final Integer userId, final Integer itemId);
+    ItemViewDto findById(final int userId, final int itemId);
 
     List<ItemViewDto> search(final String text, final Pageable pageable);
 
-    ItemViewDto create(final Integer userId, final ItemCreateDto itemCreateDto);
+    ItemViewDto create(final int userId, final ItemCreateDto itemCreateDto);
 
-    ItemViewDto update(final Integer userId, final int itemId, final ItemUpdateDto itemUpdateDto);
+    ItemViewDto update(final int userId, final int itemId, final ItemUpdateDto itemUpdateDto);
 
-    CommentViewDto addComment(final Integer userId, final Integer itemId, final CommentCreateDto commentCreateDto);
+    CommentViewDto addComment(final int userId, final int itemId, final CommentCreateDto commentCreateDto);
 }
