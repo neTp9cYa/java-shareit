@@ -1,7 +1,8 @@
 package ru.practicum.shareit.booking.controller;
 
 import java.util.List;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,47 +19,57 @@ import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.common.LogInputOutputAnnotaion;
+import ru.practicum.shareit.common.pagination.FlexPageRequest;
 
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
 
     private final BookingService bookingService;
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public BookingViewDto create(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                 @RequestBody @Validated final BookingCreateDto bookingCreateDto) {
+    public BookingViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
+                                 @RequestBody @Valid final BookingCreateDto bookingCreateDto) {
         return bookingService.create(userId, bookingCreateDto);
     }
 
     @PatchMapping("{bookingId}")
     @LogInputOutputAnnotaion
-    public BookingViewDto approveOrReject(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                          @PathVariable @NotNull final Integer bookingId,
-                                          @RequestParam @NotNull final Boolean approved) {
+    public BookingViewDto approveOrReject(@RequestHeader("X-Sharer-User-Id") final int userId,
+                                          @PathVariable final int bookingId,
+                                          @RequestParam final boolean approved) {
         return bookingService.approveOrReject(userId, bookingId, approved);
     }
 
     @GetMapping("{bookingId}")
     @LogInputOutputAnnotaion
-    public BookingViewDto findById(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                   @PathVariable @NotNull final Integer bookingId) {
+    public BookingViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId,
+                                   @PathVariable final int bookingId) {
         return bookingService.findById(userId, bookingId);
     }
 
     @GetMapping()
     @LogInputOutputAnnotaion
-    public List<BookingViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                        @RequestParam(defaultValue = "ALL") final BookingState state) {
-        return bookingService.findOwn(userId, state);
+    public List<BookingViewDto> findOwn(
+        @RequestHeader("X-Sharer-User-Id") final int userId,
+        @RequestParam(defaultValue = "ALL") final BookingState state,
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final int size) {
+
+        return bookingService.findOwn(userId, state, FlexPageRequest.of(from, size));
     }
 
     @GetMapping("owner")
     @LogInputOutputAnnotaion
-    public List<BookingViewDto> findByItemOwner(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
-                                                @RequestParam(defaultValue = "ALL") final BookingState state) {
-        return bookingService.findByItemOwner(userId, state);
+    public List<BookingViewDto> findByItemOwner(
+        @RequestHeader("X-Sharer-User-Id") final int userId,
+        @RequestParam(defaultValue = "ALL") final BookingState state,
+        @RequestParam(defaultValue = "0") @Min(0) final int from,
+        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final int size) {
+
+        return bookingService.findByItemOwner(userId, state, FlexPageRequest.of(from, size));
     }
 }

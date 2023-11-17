@@ -24,8 +24,8 @@ public class BookingMapperImpl implements BookingMapper {
     public BookingViewDto toBookingViewDto(final Booking booking) {
         return BookingViewDto.builder()
             .id(booking.getId())
-            .item(itemMapper.toItemDto(booking.getItem()))
-            .booker(userMapper.toUserDto(booking.getBooker()))
+            .item(itemMapper.toItemViewDto(booking.getItem(), null, null))
+            .booker(userMapper.toUserViewDto(booking.getBooker()))
             .start(booking.getStart())
             .end(booking.getEnd())
             .status(booking.getStatus())

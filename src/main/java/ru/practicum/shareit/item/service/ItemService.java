@@ -1,22 +1,24 @@
 package ru.practicum.shareit.item.service;
 
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.item.dto.CommentCreateDto;
 import ru.practicum.shareit.item.dto.CommentViewDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.dto.ItemViewDto;
 
 public interface ItemService {
 
-    List<ItemViewDto> findByUserId(final Integer userId);
+    List<ItemViewDto> findByUserId(final int userId, final Pageable pageable);
 
-    ItemViewDto findById(final Integer userId, final Integer itemId);
+    ItemViewDto findById(final int userId, final int itemId);
 
-    List<ItemDto> search(final String text);
+    List<ItemViewDto> search(final String text, final Pageable pageable);
 
-    ItemDto create(final Integer userId, final ItemDto itemDto);
+    ItemViewDto create(final int userId, final ItemCreateDto itemCreateDto);
 
-    ItemDto update(final Integer userId, final ItemDto itemDto);
+    ItemViewDto update(final int userId, final int itemId, final ItemUpdateDto itemUpdateDto);
 
-    CommentViewDto addComment(final Integer userId, final Integer itemId, final CommentCreateDto commentCreateDto);
+    CommentViewDto addComment(final int userId, final int itemId, final CommentCreateDto commentCreateDto);
 }

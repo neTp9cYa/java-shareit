@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.common.exception.NotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.dto.UserViewDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -18,38 +20,38 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
+    public List<UserViewDto> findAll() {
         final List<User> users = userRepository.findAll();
-        return userMapper.toUserDtoList(users);
+        return userMapper.toUserViewDtoList(users);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserDto findById(final int userId) {
+    public UserViewDto findById(final int userId) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
-        return userMapper.toUserDto(user);
+        return userMapper.toUserViewDto(user);
     }
 
     @Override
     @Transactional
-    public UserDto create(final UserDto userDto) {
-        final User user = userMapper.toUser(userDto);
+    public UserViewDto create(final UserCreateDto userCreateDto) {
+        final User user = userMapper.toUser(userCreateDto);
         final User storedUser = userRepository.save(user);
-        return userMapper.toUserDto(storedUser);
+        return userMapper.toUserViewDto(storedUser);
     }
 
     @Override
     @Transactional
-    public UserDto update(final UserDto userDto) {
+    public UserViewDto update(final int userId, final UserUpdateDto userUpdateDto) {
 
         // validate if user exists
-        final User storedUser = userRepository.findById(userDto.getId())
+        final User storedUser = userRepository.findById(userId)
             .orElseThrow(() -> {
-                throw new NotFoundException(String.format("User with id $d not found", userDto.getId()));
+                throw new NotFoundException(String.format("User with id $d not found", userId));
             });
 
-        final User user = userMapper.toUser(userDto);
+        final User user = userMapper.toUser(userUpdateDto);
 
         // update passed fields to new values
         if (user.getName() != null) {
@@ -60,7 +62,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(storedUser);
-        return userMapper.toUserDto(storedUser);
+        return userMapper.toUserViewDto(storedUser);
     }
 
     @Override

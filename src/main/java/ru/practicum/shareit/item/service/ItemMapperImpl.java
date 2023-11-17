@@ -5,7 +5,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.dto.ItemViewBookingDto;
 import ru.practicum.shareit.item.dto.ItemViewDto;
 import ru.practicum.shareit.item.model.Comment;
@@ -17,16 +18,6 @@ import ru.practicum.shareit.user.model.User;
 public class ItemMapperImpl implements ItemMapper {
 
     private final CommentMapper commentMapper;
-
-    @Override
-    public ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
-            .id(item.getId())
-            .name(item.getName())
-            .description(item.getDescription())
-            .available(item.getAvailable())
-            .build();
-    }
 
     @Override
     public ItemViewDto toItemViewDto(final Item item,
@@ -45,6 +36,7 @@ public class ItemMapperImpl implements ItemMapper {
             .name(item.getName())
             .description(item.getDescription())
             .available(item.getAvailable())
+            .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
             .lastBooking(toItemViewBookingDto(lastBooking))
             .nextBooking(toItemViewBookingDto(nextBooking))
             .comments(commentMapper.toCommentViewDtoList(comments))
@@ -63,17 +55,28 @@ public class ItemMapperImpl implements ItemMapper {
     }
 
     @Override
-    public List<ItemDto> toItemDtoList(final List<Item> items) {
-        return items.stream().map(this::toItemDto).collect(Collectors.toList());
+    public List<ItemViewDto> toItemViewDtoList(final List<Item> items) {
+        return items.stream()
+            .map(item -> toItemViewDto(item, null, null))
+            .collect(Collectors.toList());
     }
 
     @Override
-    public Item toItem(final ItemDto itemDto, final User owner) {
+    public Item toItem(final ItemUpdateDto itemUpdateDto, final User owner) {
         return Item.builder()
-            .id(itemDto.getId())
-            .name(itemDto.getName())
-            .description(itemDto.getDescription())
-            .available(itemDto.getAvailable())
+            .name(itemUpdateDto.getName())
+            .description(itemUpdateDto.getDescription())
+            .available(itemUpdateDto.getAvailable())
+            .owner(owner)
+            .build();
+    }
+
+    @Override
+    public Item toItem(final ItemCreateDto itemCreateDto, final User owner) {
+        return Item.builder()
+            .name(itemCreateDto.getName())
+            .description(itemCreateDto.getDescription())
+            .available(itemCreateDto.getAvailable())
             .owner(owner)
             .build();
     }
