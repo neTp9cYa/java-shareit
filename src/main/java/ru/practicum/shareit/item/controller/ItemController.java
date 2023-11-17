@@ -33,7 +33,7 @@ public class ItemController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") final int userId,
                                      @RequestParam(defaultValue = "0") @Min(0) final int from,
                                      @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
         return itemService.findByUserId(userId, FlexPageRequest.of(from, size));
@@ -41,7 +41,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     @LogInputOutputAnnotaion
-    public ItemViewDto findById(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public ItemViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId,
                                 @PathVariable @NotNull final Integer itemId) {
         return itemService.findById(userId, itemId);
     }
@@ -56,14 +56,14 @@ public class ItemController {
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public ItemViewDto create(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public ItemViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
                               @RequestBody @Validated final ItemCreateDto itemCreateDto) {
         return itemService.create(userId, itemCreateDto);
     }
 
     @PatchMapping("/{itemId}")
     @LogInputOutputAnnotaion
-    public ItemViewDto update(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public ItemViewDto update(@RequestHeader("X-Sharer-User-Id") final int userId,
                               @PathVariable @NotNull final Integer itemId,
                               @RequestBody @Validated final ItemUpdateDto itemUpdateDto) {
         return itemService.update(userId, itemId, itemUpdateDto);
@@ -71,7 +71,7 @@ public class ItemController {
 
     @PostMapping("{itemId}/comment")
     @LogInputOutputAnnotaion
-    public CommentViewDto addComment(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public CommentViewDto addComment(@RequestHeader("X-Sharer-User-Id") final int userId,
                                      @PathVariable @NotNull final Integer itemId,
                                      @RequestBody @Valid final CommentCreateDto commentCreateDto) {
         return itemService.addComment(userId, itemId, commentCreateDto);

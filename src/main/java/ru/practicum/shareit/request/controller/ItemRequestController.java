@@ -28,21 +28,21 @@ public class ItemRequestController {
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public ItemRequestViewDto create(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public ItemRequestViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
                                      @RequestBody @Validated ItemRequestCreateDto requestCreateDto) {
         return itemRequestService.create(userId, requestCreateDto);
     }
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<ItemRequestViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId) {
+    public List<ItemRequestViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") final int userId) {
         return itemRequestService.findOwn(userId);
     }
 
     @GetMapping("all")
     //@LogInputOutputAnnotaion
     public List<ItemRequestViewDto> findSomeoneElses(
-        @RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+        @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "0") @Min(0) final int from,
         @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
 
@@ -51,7 +51,7 @@ public class ItemRequestController {
 
     @GetMapping("{requestId}")
     @LogInputOutputAnnotaion
-    public ItemRequestViewDto findById(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public ItemRequestViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId,
                                        @PathVariable final int requestId) {
         return itemRequestService.findById(userId, requestId);
     }

@@ -46,14 +46,14 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     @LogInputOutputAnnotaion
-    public UserViewDto update(@PathVariable @NotNull final Integer userId,
+    public UserViewDto update(@PathVariable final int userId,
                               @RequestBody @Validated final UserUpdateDto userUpdateDto) {
         return userService.update(userId, userUpdateDto);
     }
 
     @DeleteMapping("/{userId}")
     @LogInputOutputAnnotaion
-    public void delete(@PathVariable @NotNull final Integer userId) {
+    public void delete(@PathVariable final int userId) {
         userService.delete(userId);
     }
 }

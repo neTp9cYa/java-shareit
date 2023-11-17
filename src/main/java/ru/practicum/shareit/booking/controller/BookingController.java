@@ -30,14 +30,14 @@ public class BookingController {
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public BookingViewDto create(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public BookingViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
                                  @RequestBody @Validated final BookingCreateDto bookingCreateDto) {
         return bookingService.create(userId, bookingCreateDto);
     }
 
     @PatchMapping("{bookingId}")
     @LogInputOutputAnnotaion
-    public BookingViewDto approveOrReject(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public BookingViewDto approveOrReject(@RequestHeader("X-Sharer-User-Id") final int userId,
                                           @PathVariable @NotNull final Integer bookingId,
                                           @RequestParam @NotNull final Boolean approved) {
         return bookingService.approveOrReject(userId, bookingId, approved);
@@ -45,7 +45,7 @@ public class BookingController {
 
     @GetMapping("{bookingId}")
     @LogInputOutputAnnotaion
-    public BookingViewDto findById(@RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+    public BookingViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId,
                                    @PathVariable @NotNull final Integer bookingId) {
         return bookingService.findById(userId, bookingId);
     }
@@ -53,7 +53,7 @@ public class BookingController {
     @GetMapping()
     @LogInputOutputAnnotaion
     public List<BookingViewDto> findOwn(
-        @RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+        @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "ALL") final BookingState state,
         @RequestParam(defaultValue = "0") @Min(0) final int from,
         @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
@@ -64,7 +64,7 @@ public class BookingController {
     @GetMapping("owner")
     @LogInputOutputAnnotaion
     public List<BookingViewDto> findByItemOwner(
-        @RequestHeader("X-Sharer-User-Id") @NotNull final Integer userId,
+        @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "ALL") final BookingState state,
         @RequestParam(defaultValue = "0") @Min(0) final int from,
         @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final Integer size) {
