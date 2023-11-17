@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.controller;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +35,8 @@ public class ItemController {
     @LogInputOutputAnnotaion
     public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") final int userId,
                                      @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
-                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
+                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1)
+                                     final int size) {
         return itemService.findByUserId(userId, FlexPageRequest.of(from, size));
     }
 
@@ -51,7 +51,8 @@ public class ItemController {
     @LogInputOutputAnnotaion
     public List<ItemViewDto> search(@RequestParam final String text,
                                     @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
-                                    @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
+                                    @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1)
+                                    final int size) {
         return itemService.search(text, FlexPageRequest.of(from, size));
     }
 
