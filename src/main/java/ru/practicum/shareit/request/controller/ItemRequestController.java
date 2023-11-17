@@ -43,7 +43,7 @@ public class ItemRequestController {
 
     @GetMapping("all")
     //@LogInputOutputAnnotaion
-    public List<ItemRequestViewDto> findSomeoneElses(
+    public List<ItemRequestViewDto> findAll(
         @RequestHeader("X-Sharer-User-Id") final int userId,
         @RequestParam(defaultValue = "0") @Valid @Min(0) final int from,
         @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Valid @Min(1) final int size) {
