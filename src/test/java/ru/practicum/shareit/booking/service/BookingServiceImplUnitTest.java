@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -53,7 +54,7 @@ class BookingServiceImplUnitTest {
         final User user = getValidUser();
 
         Mockito
-            .when(userRepository.findById(Mockito.anyInt()))
+            .when(userRepository.findById(anyInt()))
             .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -70,11 +71,11 @@ class BookingServiceImplUnitTest {
         final BookingCreateDto bookingCreateDto = getValidBookingCreateDto();
 
         Mockito
-            .when(userRepository.findById(Mockito.anyInt()))
+            .when(userRepository.findById(anyInt()))
             .thenReturn(Optional.of(getValidUser()));
 
         Mockito
-            .when(itemRepository.findById(Mockito.anyInt()))
+            .when(itemRepository.findById(anyInt()))
             .thenReturn(Optional.empty());
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -91,11 +92,11 @@ class BookingServiceImplUnitTest {
         final Item item = getValidItem();
 
         Mockito
-            .when(userRepository.findById(Mockito.anyInt()))
+            .when(userRepository.findById(anyInt()))
             .thenReturn(Optional.of(item.getOwner()));
 
         Mockito
-            .when(itemRepository.findById(Mockito.anyInt()))
+            .when(itemRepository.findById(anyInt()))
             .thenReturn(Optional.of(item));
 
         final NotFoundException exception = Assertions.assertThrows(
@@ -115,11 +116,11 @@ class BookingServiceImplUnitTest {
         item.setAvailable(false);
 
         Mockito
-            .when(userRepository.findById(Mockito.anyInt()))
+            .when(userRepository.findById(anyInt()))
             .thenReturn(Optional.of(user));
 
         Mockito
-            .when(itemRepository.findById(Mockito.anyInt()))
+            .when(itemRepository.findById(anyInt()))
             .thenReturn(Optional.of(item));
 
         final ValidationException exception = Assertions.assertThrows(
@@ -264,7 +265,7 @@ class BookingServiceImplUnitTest {
     }
 
     @Test
-    void whenFindOwnThenSuccess() {
+    void whenFindOwnAllThenSuccess() {
         final User user = getValidUser();
         final Pageable pageable = FlexPageRequest.of(0, 5);
 
@@ -276,6 +277,193 @@ class BookingServiceImplUnitTest {
 
         Mockito.verify(bookingRepository, Mockito.times(1))
             .findOwn(user.getId(), pageable);
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindOwnWaitingThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findOwn(user.getId(), BookingState.WAITING, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findOwn(user.getId(), BookingStatus.WAITING, pageable);
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindOwnRejectedThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findOwn(user.getId(), BookingState.REJECTED, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findOwn(user.getId(), BookingStatus.REJECTED, pageable);
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindOwnPastThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findOwn(user.getId(), BookingState.PAST, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findOwnInPast(anyInt(), any(), any());
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindOwnCurrentThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findOwn(user.getId(), BookingState.CURRENT, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findOwnCurrent(anyInt(), any(), any());
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindOwnFutureThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findOwn(user.getId(), BookingState.FUTURE, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findOwnInFuture(anyInt(), any(), any());
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindByItemOwnerAllThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findByItemOwner(user.getId(), BookingState.ALL, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findByItemOwner(user.getId(), pageable);
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindByItemOwnerWaitingThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findByItemOwner(user.getId(), BookingState.WAITING, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findByItemOwner(user.getId(), BookingStatus.WAITING, pageable);
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindByItemOwnerRejectedThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findByItemOwner(user.getId(), BookingState.REJECTED, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findByItemOwner(user.getId(), BookingStatus.REJECTED, pageable);
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindByItemOwnerPastThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findByItemOwner(user.getId(), BookingState.PAST, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findByItemOwnerInPast(anyInt(), any(), any());
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindByItemOwnerCurrentThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findByItemOwner(user.getId(), BookingState.CURRENT, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findByItemOwnerCurrent(anyInt(), any(), any());
+
+        Mockito.verifyNoMoreInteractions(bookingRepository);
+    }
+
+    @Test
+    void whenFindByItemOwnerFutureThenSuccess() {
+        final User user = getValidUser();
+        final Pageable pageable = FlexPageRequest.of(0, 5);
+
+        Mockito
+            .when(userRepository.findById(user.getId()))
+            .thenReturn(Optional.of(user));
+
+        bookingService.findByItemOwner(user.getId(), BookingState.FUTURE, pageable);
+
+        Mockito.verify(bookingRepository, Mockito.times(1))
+            .findByItemOwnerInFuture(anyInt(), any(), any());
 
         Mockito.verifyNoMoreInteractions(bookingRepository);
     }
