@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.repository;
 
 import java.util.List;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,7 @@ import ru.practicum.shareit.item.model.Item;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-    List<Item> findByOwner_Id(final int userId);
+    List<Item> findByOwner_Id(final int userId, Sort sort);
 
     List<Item> findByRequest_Id(final int requestId);
 

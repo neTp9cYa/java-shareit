@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<ItemViewDto> findByUserId(final int userId, final Pageable pageable) {
-        final List<Item> items = itemRepository.findByOwner_Id(userId);
+        final List<Item> items = itemRepository.findByOwner_Id(userId, Sort.by("id"));
 
         final List<Booking> bookings =
             bookingRepository.findByItem_Owner_IdAndStatus(userId, BookingStatus.APPROVED, pageable);

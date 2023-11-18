@@ -69,7 +69,7 @@ class ItemServiceImplTest {
         final Item item = getValidItem();
         final Pageable pageable = FlexPageRequest.of(0, 5);
 
-        Mockito.when(itemRepository.findByOwner_Id(user.getId())).thenReturn(List.of(item));
+        Mockito.when(itemRepository.findByOwner_Id(anyInt(), any())).thenReturn(List.of(item));
 
         final List<ItemViewDto> itemViewDtos = itemService.findByUserId(user.getId(), pageable);
 
