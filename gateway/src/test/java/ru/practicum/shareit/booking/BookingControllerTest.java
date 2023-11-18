@@ -15,8 +15,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import ru.practicum.shareit.booking.BookingClient;
 import ru.practicum.shareit.booking.BookingController;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
+import ru.practicum.shareit.common.exception.ExceptionHelper;
 
-@WebMvcTest(controllers = {BookingController.class})
+@WebMvcTest(controllers = {BookingController.class, ExceptionHelper.class})
 class BookingControllerTest {
 
     private final BookItemRequestDto bookItemRequestDto1 = BookItemRequestDto.builder()
