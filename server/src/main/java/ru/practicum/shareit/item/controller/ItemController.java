@@ -1,10 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
 import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,48 +23,41 @@ import ru.practicum.shareit.item.service.ItemService;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-@Validated
 public class ItemController {
 
     private final ItemService itemService;
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                     @RequestParam(defaultValue = "0") @Min(0) final int from,
-                                     @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1)
-                                     final int size) {
+    public List<ItemViewDto> findOwn(@RequestHeader("X-Sharer-User-Id") final int userId, @RequestParam final int from,
+                                     @RequestParam final int size) {
         return itemService.findByUserId(userId, FlexPageRequest.of(from, size));
     }
 
     @GetMapping("/{itemId}")
     @LogInputOutputAnnotaion
-    public ItemViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                @PathVariable final int itemId) {
+    public ItemViewDto findById(@RequestHeader("X-Sharer-User-Id") final int userId, @PathVariable final int itemId) {
         return itemService.findById(userId, itemId);
     }
 
     @GetMapping("/search")
     @LogInputOutputAnnotaion
-    public List<ItemViewDto> search(@RequestParam final String text,
-                                    @RequestParam(defaultValue = "0") @Min(0) final int from,
-                                    @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1)
-                                    final int size) {
+    public List<ItemViewDto> search(@RequestParam final String text, @RequestParam final int from,
+                                    @RequestParam final int size) {
         return itemService.search(text, FlexPageRequest.of(from, size));
     }
 
     @PostMapping
     @LogInputOutputAnnotaion
     public ItemViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
-                              @RequestBody @Valid final ItemCreateDto itemCreateDto) {
+                              @RequestBody final ItemCreateDto itemCreateDto) {
         return itemService.create(userId, itemCreateDto);
     }
 
     @PatchMapping("/{itemId}")
     @LogInputOutputAnnotaion
-    public ItemViewDto update(@RequestHeader("X-Sharer-User-Id") final int userId,
-                              @PathVariable final int itemId,
-                              @RequestBody @Valid final ItemUpdateDto itemUpdateDto) {
+    public ItemViewDto update(@RequestHeader("X-Sharer-User-Id") final int userId, @PathVariable final int itemId,
+                              @RequestBody final ItemUpdateDto itemUpdateDto) {
         return itemService.update(userId, itemId, itemUpdateDto);
     }
 
@@ -75,7 +65,7 @@ public class ItemController {
     @LogInputOutputAnnotaion
     public CommentViewDto addComment(@RequestHeader("X-Sharer-User-Id") final int userId,
                                      @PathVariable final int itemId,
-                                     @RequestBody @Valid final CommentCreateDto commentCreateDto) {
+                                     @RequestBody final CommentCreateDto commentCreateDto) {
         return itemService.addComment(userId, itemId, commentCreateDto);
     }
 }

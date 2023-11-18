@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -32,17 +32,18 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingViewDto create(final int userId, final BookingCreateDto bookingCreateDto) {
+    public BookingViewDto create(final int userId, final BookItemRequestDto bookItemRequestDto) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
-        final Item item = itemRepository.findById(bookingCreateDto.getItemId())
+        final Item item = itemRepository.findById(bookItemRequestDto.getItemId())
             .orElseThrow(
-                () -> new NotFoundException(String.format("Item with id %d not found", bookingCreateDto.getItemId())));
+                () -> new NotFoundException(
+                    String.format("Item with id %d not found", bookItemRequestDto.getItemId())));
 
         validateBookingCreation(user, item);
 
-        final Booking booking = bookingMapper.toBooking(bookingCreateDto, user, item);
+        final Booking booking = bookingMapper.toBooking(bookItemRequestDto, user, item);
 
         final Booking storedBooking = bookingRepository.save(booking);
         return bookingMapper.toBookingViewDto(storedBooking);

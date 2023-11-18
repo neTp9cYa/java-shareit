@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -38,10 +38,10 @@ public class BookingMapperImpl implements BookingMapper {
     }
 
     @Override
-    public Booking toBooking(final BookingCreateDto bookingCreateDto, final User user, final Item item) {
+    public Booking toBooking(final BookItemRequestDto bookItemRequestDto, final User user, final Item item) {
         return Booking.builder()
-            .start(bookingCreateDto.getStart())
-            .end(bookingCreateDto.getEnd())
+            .start(bookItemRequestDto.getStart())
+            .end(bookItemRequestDto.getEnd())
             .status(BookingStatus.WAITING)
             .booker(user)
             .item(item)

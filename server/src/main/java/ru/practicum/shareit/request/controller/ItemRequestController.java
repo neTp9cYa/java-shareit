@@ -1,8 +1,6 @@
 package ru.practicum.shareit.request.controller;
 
 import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +28,7 @@ public class ItemRequestController {
     @PostMapping
     @LogInputOutputAnnotaion
     public ItemRequestViewDto create(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                     @RequestBody @Valid ItemRequestCreateDto requestCreateDto) {
+                                     @RequestBody ItemRequestCreateDto requestCreateDto) {
         return itemRequestService.create(userId, requestCreateDto);
     }
 
@@ -42,11 +40,8 @@ public class ItemRequestController {
 
     @GetMapping("all")
     @LogInputOutputAnnotaion
-    public List<ItemRequestViewDto> findAll(
-        @RequestHeader("X-Sharer-User-Id") final int userId,
-        @RequestParam(defaultValue = "0") @Min(0) final int from,
-        @RequestParam(defaultValue = Integer.MAX_VALUE + "") @Min(1) final int size) {
-
+    public List<ItemRequestViewDto> findAll(@RequestHeader("X-Sharer-User-Id") final int userId,
+                                            @RequestParam final int from, @RequestParam final int size) {
         return itemRequestService.findSomeoneElses(userId, FlexPageRequest.of(from, size));
     }
 

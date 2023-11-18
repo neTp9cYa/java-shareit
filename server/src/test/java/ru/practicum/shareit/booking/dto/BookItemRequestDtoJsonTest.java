@@ -9,20 +9,20 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 
 @JsonTest
-class BookingCreateDtoJsonTest {
+class BookItemRequestDtoJsonTest {
 
     @Autowired
-    private JacksonTester<BookingCreateDto> json;
+    private JacksonTester<BookItemRequestDto> json;
 
     @Test
-    void testBookingCreateDto() throws Exception {
-        final BookingCreateDto bookingCreateDto = BookingCreateDto.builder()
+    void testBookItemRequestDto() throws Exception {
+        final BookItemRequestDto bookItemRequestDto = BookItemRequestDto.builder()
             .itemId(1)
             .start(LocalDateTime.of(2023, 11, 16, 2, 17, 31))
             .end(LocalDateTime.of(2024, 11, 16, 2, 17, 31))
             .build();
 
-        final JsonContent<BookingCreateDto> result = json.write(bookingCreateDto);
+        final JsonContent<BookItemRequestDto> result = json.write(bookItemRequestDto);
 
         assertThat(result).extractingJsonPathNumberValue("$.itemId").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2023-11-16T02:17:31");

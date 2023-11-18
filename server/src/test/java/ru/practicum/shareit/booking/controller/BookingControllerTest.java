@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingViewDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -32,7 +32,7 @@ import ru.practicum.shareit.user.dto.UserViewDto;
 @WebMvcTest(controllers = {BookingController.class, ExceptionHelper.class})
 class BookingControllerTest {
 
-    private final BookingCreateDto bookingCreateDto1 = BookingCreateDto.builder()
+    private final BookItemRequestDto bookItemRequestDto1 = BookItemRequestDto.builder()
         .itemId(1)
         .start(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
         .end(LocalDateTime.now().plus(2, ChronoUnit.DAYS))
@@ -62,26 +62,9 @@ class BookingControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("X-Sharer-User-Id", 1)
-                .content(mapper.writeValueAsString(bookingCreateDto1)))
+                .content(mapper.writeValueAsString(bookItemRequestDto1)))
             .andExpect(status().isOk())
             .andExpect(content().json(mapper.writeValueAsString(bookingViewDto1)));
-    }
-
-    @Test
-    void whenEndBeforeStartThenCreateReturn400() throws Exception {
-        mvc.perform(post("/bookings")
-                .characterEncoding(StandardCharsets.UTF_8)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("X-Sharer-User-Id", 1)
-                .content(mapper.writeValueAsString(
-                    BookingCreateDto.builder()
-                        .itemId(1)
-                        .start(LocalDateTime.now().plus(2, ChronoUnit.DAYS))
-                        .end(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
-                        .build()
-                )))
-            .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -59,7 +59,7 @@ class BookingServiceImplUnitTest {
 
         final NotFoundException exception = Assertions.assertThrows(
             NotFoundException.class,
-            () -> bookingService.create(user.getId(), getValidBookingCreateDto()));
+            () -> bookingService.create(user.getId(), getValidBookItemRequestDto()));
 
         Assertions.assertEquals(
             String.format("User with id %d not found", user.getId()),
@@ -68,7 +68,7 @@ class BookingServiceImplUnitTest {
 
     @Test
     void whenCreateWithAbsentItemThenThrowException() {
-        final BookingCreateDto bookingCreateDto = getValidBookingCreateDto();
+        final BookItemRequestDto bookItemRequestDto = getValidBookItemRequestDto();
 
         Mockito
             .when(userRepository.findById(anyInt()))
@@ -80,10 +80,10 @@ class BookingServiceImplUnitTest {
 
         final NotFoundException exception = Assertions.assertThrows(
             NotFoundException.class,
-            () -> bookingService.create(1, bookingCreateDto));
+            () -> bookingService.create(1, bookItemRequestDto));
 
         Assertions.assertEquals(
-            String.format("Item with id %d not found", bookingCreateDto.getItemId()),
+            String.format("Item with id %d not found", bookItemRequestDto.getItemId()),
             exception.getMessage());
     }
 
@@ -101,7 +101,7 @@ class BookingServiceImplUnitTest {
 
         final NotFoundException exception = Assertions.assertThrows(
             NotFoundException.class,
-            () -> bookingService.create(item.getOwner().getId(), getValidBookingCreateDto()));
+            () -> bookingService.create(item.getOwner().getId(), getValidBookItemRequestDto()));
 
         Assertions.assertEquals(
             String.format("Item with id %d not found", item.getId()),
@@ -125,7 +125,7 @@ class BookingServiceImplUnitTest {
 
         final ValidationException exception = Assertions.assertThrows(
             ValidationException.class,
-            () -> bookingService.create(item.getOwner().getId(), getValidBookingCreateDto()));
+            () -> bookingService.create(item.getOwner().getId(), getValidBookItemRequestDto()));
 
         Assertions.assertEquals(
             String.format("Item with id %d is not available", item.getId()),
@@ -135,7 +135,7 @@ class BookingServiceImplUnitTest {
     @Test
     void whenCreateWithValidDataThenSuccess() {
 
-        final BookingCreateDto bookingCreateDto = getValidBookingCreateDto();
+        final BookItemRequestDto bookItemRequestDto = getValidBookItemRequestDto();
         final User user = getValidUser();
         final Item item = getValidItem();
         item.getOwner().setId(user.getId() + 1);
@@ -153,7 +153,7 @@ class BookingServiceImplUnitTest {
             .when(bookingRepository.save(any()))
             .thenReturn(booking);
 
-        bookingService.create(user.getId(), bookingCreateDto);
+        bookingService.create(user.getId(), bookItemRequestDto);
 
         Mockito.verify(userRepository, Mockito.times(1))
             .findById(user.getId());
@@ -468,8 +468,8 @@ class BookingServiceImplUnitTest {
         Mockito.verifyNoMoreInteractions(bookingRepository);
     }
 
-    private BookingCreateDto getValidBookingCreateDto() {
-        return BookingCreateDto.builder()
+    private BookItemRequestDto getValidBookItemRequestDto() {
+        return BookItemRequestDto.builder()
             .itemId(1)
             .start(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
             .end(LocalDateTime.now().plus(2, ChronoUnit.DAYS))

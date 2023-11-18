@@ -14,16 +14,10 @@ import ru.practicum.shareit.user.dto.UserViewDto;
 @ToString
 @Builder
 public class BookingViewDto {
-
     private Integer id;
-
     private ItemViewDto item;
-
     private UserViewDto booker;
-
     private LocalDateTime start;
-
     private LocalDateTime end;
-
     private BookingStatus status;
 }

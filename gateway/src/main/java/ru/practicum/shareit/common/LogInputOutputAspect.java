@@ -1,4 +1,4 @@
-package ru.practicum.shareit.common.controller;
+package ru.practicum.shareit.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
-public class EndpointAspect {
+public class LogInputOutputAspect {
 
     @Before("@annotation(ru.practicum.shareit.common.LogInputOutputAnnotaion)")
     public void before(JoinPoint joinPoint) {

@@ -10,10 +10,7 @@ import lombok.ToString;
 @ToString
 @Builder
 public class ItemUpdateDto {
-
     private String name;
-
     private String description;
-
     private Boolean available;
 }
