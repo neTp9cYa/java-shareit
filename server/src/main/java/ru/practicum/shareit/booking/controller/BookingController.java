@@ -58,7 +58,8 @@ public class BookingController {
     @PatchMapping("{bookingId}")
     @LogInputOutputAnnotaion
     public BookingViewDto approveOrReject(@RequestHeader("X-Sharer-User-Id") final int userId,
-                                          @PathVariable final int bookingId, @RequestParam final boolean approved) {
+                                          @PathVariable final int bookingId,
+                                          @RequestParam(name = "approved") final boolean approved) {
         return bookingService.approveOrReject(userId, bookingId, approved);
     }
 }

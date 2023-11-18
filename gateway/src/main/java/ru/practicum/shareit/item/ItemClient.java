@@ -55,7 +55,7 @@ public class ItemClient extends BaseClient {
             "from", from,
             "size", size
         );
-        return get("?text={text}&from={from}&size={size}", userId, parameters);
+        return get("/search?text={text}&from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> update(final long userId,
@@ -67,6 +67,6 @@ public class ItemClient extends BaseClient {
     public ResponseEntity<Object> addComment(final long userId,
                                              final long itemId,
                                              final CommentCreateDto commentCreateDto) {
-        return patch("/" + itemId + "/comment", userId, null, commentCreateDto);
+        return post("/" + itemId + "/comment", userId, null, commentCreateDto);
     }
 }

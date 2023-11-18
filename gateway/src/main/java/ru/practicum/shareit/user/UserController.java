@@ -57,9 +57,9 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @LogInputOutputAnnotaion
-    public void delete(
+    public ResponseEntity<Object> delete(
         @PathVariable final int userId) {
 
-        userClient.delete(userId);
+        return userClient.delete(userId);
     }
 }

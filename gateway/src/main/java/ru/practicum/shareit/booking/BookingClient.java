@@ -55,16 +55,16 @@ public class BookingClient extends BaseClient {
             "from", from,
             "size", size
         );
-        return get("owner/?state={state}&from={from}&size={size}", userId, parameters);
+        return get("/owner?state={state}&from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> approveOrRejectBooking(final long userId,
                                                          final long bookingId,
                                                          final boolean approved) {
         Map<String, Object> parameters = Map.of(
-            "approved", approved
+            "approved", String.valueOf(approved)
         );
 
-        return patch("/" + bookingId, userId, parameters, null);
+        return patch("/" + bookingId + "?approved={approved}", userId, parameters, null);
     }
 }
