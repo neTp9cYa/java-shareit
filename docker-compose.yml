@@ -23,8 +23,8 @@ services:
         condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
-      - SPRING_DATABASE_USERNAME=root
-      - SPRING_DATABASE_PASSWORD=root
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
     healthcheck:
       test: "wget -q localhost:9090/actuator/health -O - | grep UP || exit 1"
       interval: 2s
